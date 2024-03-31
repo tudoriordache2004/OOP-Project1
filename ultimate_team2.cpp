@@ -114,6 +114,20 @@ public:
     }
 };
 
+bool isNumber(std::string s)
+{
+    if (s.size() == 0)
+        return false;
+    for (int i = 0; i < s.size(); i++)
+    {
+        if ((s[i] >= '0' && s[i] <= '9') == false)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 void Choose_Formation(int &fundasi, int &mijlocasi, int &atacanti)
 {
     std::string def;
@@ -126,11 +140,9 @@ void Choose_Formation(int &fundasi, int &mijlocasi, int &atacanti)
         std::cout << "Defenders: ";
         std::cin >> def;
         usleep(1500000);
-        if (stoi(def) != 3 && stoi(def) != 4 && stoi(def) != 5)
-            std::cout << "You can't really build a formation with " << def << " defenders, you know? Let's try again, maybe? :)" << std::endl;
-        else
+        if (def == "3" || def == "4" || def == "5")
         {
-            switch (stoi(def))
+            switch (stoll(def))
             {
             case 3:
             {
@@ -148,38 +160,44 @@ void Choose_Formation(int &fundasi, int &mijlocasi, int &atacanti)
                 break;
             }
             }
-            fundasi = stoi(def);
+            fundasi = stoll(def);
             break;
         }
+        else
+            std::cout << "You can't really build a formation with " << def << " defenders, you know? Let's try again, maybe? :)" << std::endl;
     }
     while (true)
     {
         std::cout << "Midfielders: ";
         std::cin >> mid;
         usleep(1500000);
-        if (stoi(mid) != 2 && stoi(mid) != 3 && stoi(mid) != 4 && stoi(mid) != 5)
-            std::cout << "You can't really build a formation with " << mid << " midfielders, you know? Let's try again, maybe? :)" << std::endl;
-        else
+        if (mid == "2" || mid == "3" || mid == "4" || mid == "5")
         {
-            mijlocasi = stoi(mid);
+            mijlocasi = stoll(mid);
             break;
         }
+        else
+            std::cout << "You can't really build a formation with " << mid << " midfielders, you know? Let's try again, maybe? :)" << std::endl;
     }
+    std::cout << "And finally...\n";
     while (true)
     {
-        std::cout << "Finally... Attackers: ";
+        std::cout << "Attackers: ";
         std::cin >> att;
         usleep(1500000);
-        if (fundasi + mijlocasi + stoi(att) != 10)
-            std::cout << "Hey! A football team has 11 players, not " << fundasi + mijlocasi + stoi(att) + 1 << " players. :)" << std::endl;
+        if (isNumber(att) == true)
+            if (stoll(att) + fundasi + mijlocasi == 10)
+            {
+                atacanti = stoll(att);
+                break;
+            }
+            else
+                std::cout << "A football team has 11 players, not " << fundasi + mijlocasi + stoll(att) + 1 << " players. :)" << std::endl;
         else
-        {
-            atacanti = stoi(att);
-            break;
-        }
+            std::cout << att << " is not a number :)" << std::endl;
     }
-    std::cout << "Your chosen formation is " << fundasi << "-" << mijlocasi << "-" << atacanti << std::endl;
-    usleep(1000000);
+    std::cout << "Your chosen formation is " << fundasi << "-" << mijlocasi << "-" << atacanti << ". " << std::endl;
+    usleep(2000000);
     std::cout << "Let's choose your players now!" << std::endl;
 }
 
@@ -199,7 +217,7 @@ int main()
 
     // pentru alegerea formatiei
 
-    int key;
+    std::string key;
 
     // lista cu echipe
     std::vector<Football_Player> football_players;
@@ -789,16 +807,18 @@ int main()
     std::cout << "IT'S IN THE GAME!" << std::endl;
     usleep(1500000);
     std::cout << "Welcome to EA FC 24!" << std::endl;
-    usleep(500000);
+    usleep(1000000);
     while (!usn)
     {
         std::cout << "Enter your EA FC 24 username: ";
-        std::cin >> username;
+        std::getline(std::cin, username);
+        usleep(500000);
         for (auto player : players)
         {
             if (player.getUsername() == username)
             {
-                std::cout << "Welcome, " << username << ", now enter your password: ";
+                std::cout << "Welcome, " << username << "!\n";
+                std::cout << "Now enter your password: ";
                 bool pass = false;
                 while (!pass)
                 {
@@ -823,36 +843,34 @@ int main()
                     {
                         pass = true;
                         usn = true;
+                        Balance = player.getBalance();
+                        std::cout << "Your authentification was succesful, " << username << "!\n";
+                        usleep(1000000);
+                        std::cout << "Your balance is " << Balance << " coins" << std::endl;
+                        usleep(1000000);
+                        std::cout << "Now let's create your EA FC 24 Team!" << std::endl;
+                        usleep(1500000);
+                        break;
                     }
                     else
                     {
                         std::cout << "Your password is incorrect, try again!" << std::endl;
                         std::cout << "Enter your password: ";
+                        password.clear();
                     }
-                }
-                if (!usn)
-                {
-                    std::cout << "This username does not exist. Try again!" << std::endl;
-                }
-                else
-                {
-                    Balance = player.getBalance();
-                    std::cout << "Your authentification was succesful, " << username << "!"
-                              << " Your balance is " << Balance << " coins" << std::endl;
-                    std::cout << "Now let's create your EA FC 24 Team" << std::endl;
-                    break;
-                    usn = true;
                 }
             }
         }
+        if (!usn)
+            std::cout << "This username does not exist. Try again.\n";
     }
-
-    // log in ul e prost, mai lucreaza la el
 
     Choose_Formation(fundasi, mijlocasi, atacanti);
 
     char yes_or_no;
-    bool ok = false;
+    bool ok = false, ok2 = false;
+    int teamvalue = 0;
+    int teamovr = 0;
     while (!ok)
     {
         std::cout << "Let's start with the goalkeeper. Select the team he's currently playing for: " << std::endl;
@@ -877,2635 +895,3991 @@ int main()
         std::cout << "19. Watford" << std::endl;
         std::cout << "20. Norwich" << std::endl;
         std::cin >> key;
-        switch (key)
-        {
-        case (1):
-        {
-            for (const auto &player : Tottenham.get_team_players())
-                if (player.getPosition() == "GK")
-                {
-                    std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                    std::cout << "Price: " << player.getPrice() << std::endl;
-                    std::cout << "Are you sure? (y/n) ";
-                    std::cin >> yes_or_no;
-                    if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+        if (isNumber(key) == true)
+            switch (stoi(key))
+            {
+            case (1):
+            {
+                for (const auto &player : Tottenham.get_team_players())
+                    if (player.getPosition() == "GK")
                     {
-                        ok = true;
-                        Balance -= player.getPrice();
-                        std::cout << "Remaining balance: " << Balance << std::endl;
+                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                        std::cout << "Price: " << player.getPrice() << std::endl;
+                        std::cout << "Are you sure? (y/n) ";
+                        std::cin >> yes_or_no;
+                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        {
+                            ok = true;
+                            Balance -= player.getPrice();
+                            teamvalue += player.getPrice();
+                            teamovr += player.getOverall();
+                            std::cout << "Remaining balance: " << Balance << std::endl;
+                        }
+                        else if (tolower(yes_or_no) == 'n')
+                            std::cout << "Let's choose again, then." << std::endl;
+                        else
+                            std::cout << "You can't really do that :) Try again?" << std::endl;
                     }
-                    else if (tolower(yes_or_no) == 'n')
-                        std::cout << "Let's choose again, then." << std::endl;
-                    else
-                        std::cout << "You can't really do that :) Try again?" << std::endl;
-                }
-            break;
-        }
-        case (2):
-        {
-            for (const auto &player : ManchesterCity.get_team_players())
-                if (player.getPosition() == "GK")
-                {
-                    std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                    std::cout << "Price: " << player.getPrice() << std::endl;
-                    std::cout << "Are you sure? (y/n) ";
-                    std::cin >> yes_or_no;
-                    if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                break;
+            }
+            case (2):
+            {
+                for (const auto &player : ManchesterCity.get_team_players())
+                    if (player.getPosition() == "GK")
                     {
-                        ok = true;
-                        Balance -= player.getPrice();
-                        std::cout << "Remaining balance: " << Balance << std::endl;
+                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                        std::cout << "Price: " << player.getPrice() << std::endl;
+                        std::cout << "Are you sure? (y/n) ";
+                        std::cin >> yes_or_no;
+                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        {
+                            ok = true;
+                            Balance -= player.getPrice();
+                            teamvalue += player.getPrice();
+                            teamovr += player.getOverall();
+                            std::cout << "Remaining balance: " << Balance << std::endl;
+                        }
+                        else if (tolower(yes_or_no) == 'n')
+                            std::cout << "Let's choose again, then." << std::endl;
+                        else
+                            std::cout << "You can't really do that :) Try again?" << std::endl;
                     }
-                    else if (tolower(yes_or_no) == 'n')
-                        std::cout << "Let's choose again, then." << std::endl;
-                    else
-                        std::cout << "You can't really do that :) Try again?" << std::endl;
-                }
-            break;
-        }
-        case (3):
-        {
-            for (const auto &player : Chelsea.get_team_players())
-                if (player.getPosition() == "GK")
-                {
-                    std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                    std::cout << "Price: " << player.getPrice() << std::endl;
-                    std::cout << "Are you sure? (y/n) ";
-                    std::cin >> yes_or_no;
-                    if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                break;
+            }
+            case (3):
+            {
+                for (const auto &player : Chelsea.get_team_players())
+                    if (player.getPosition() == "GK")
                     {
-                        ok = true;
-                        Balance -= player.getPrice();
-                        std::cout << "Remaining balance: " << Balance << std::endl;
+                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                        std::cout << "Price: " << player.getPrice() << std::endl;
+                        std::cout << "Are you sure? (y/n) ";
+                        std::cin >> yes_or_no;
+                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        {
+                            ok = true;
+                            Balance -= player.getPrice();
+                            teamvalue += player.getPrice();
+                            teamovr += player.getOverall();
+                            std::cout << "Remaining balance: " << Balance << std::endl;
+                        }
+                        else if (tolower(yes_or_no) == 'n')
+                            std::cout << "Let's choose again, then." << std::endl;
+                        else
+                            std::cout << "You can't really do that :) Try again?" << std::endl;
                     }
-                    else if (tolower(yes_or_no) == 'n')
-                        std::cout << "Let's choose again, then." << std::endl;
-                    else
-                        std::cout << "You can't really do that :) Try again?" << std::endl;
-                }
-            break;
-        }
-        case (4):
-        {
-            for (const auto &player : ManchesterUnited.get_team_players())
-                if (player.getPosition() == "GK")
-                {
-                    std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                    std::cout << "Price: " << player.getPrice() << std::endl;
-                    std::cout << "Are you sure? (y/n) ";
-                    std::cin >> yes_or_no;
-                    if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                break;
+            }
+            case (4):
+            {
+                for (const auto &player : ManchesterUnited.get_team_players())
+                    if (player.getPosition() == "GK")
                     {
-                        ok = true;
-                        Balance -= player.getPrice();
-                        std::cout << "Remaining balance: " << Balance << std::endl;
+                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                        std::cout << "Price: " << player.getPrice() << std::endl;
+                        std::cout << "Are you sure? (y/n) ";
+                        std::cin >> yes_or_no;
+                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        {
+                            ok = true;
+                            Balance -= player.getPrice();
+                            teamvalue += player.getPrice();
+                            teamovr += player.getOverall();
+                            std::cout << "Remaining balance: " << Balance << std::endl;
+                        }
+                        else if (tolower(yes_or_no) == 'n')
+                            std::cout << "Let's choose again, then." << std::endl;
+                        else
+                            std::cout << "You can't really do that :) Try again?" << std::endl;
                     }
-                    else if (tolower(yes_or_no) == 'n')
-                        std::cout << "Let's choose again, then." << std::endl;
-                    else
-                        std::cout << "You can't really do that :) Try again?" << std::endl;
-                }
-            break;
-        }
-        case (5):
-        {
-            for (const auto &player : Liverpool.get_team_players())
-                if (player.getPosition() == "GK")
-                {
-                    std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                    std::cout << "Price: " << player.getPrice() << std::endl;
-                    std::cout << "Are you sure? (y/n) ";
-                    std::cin >> yes_or_no;
-                    if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                break;
+            }
+            case (5):
+            {
+                for (const auto &player : Liverpool.get_team_players())
+                    if (player.getPosition() == "GK")
                     {
-                        ok = true;
-                        Balance -= player.getPrice();
-                        std::cout << "Remaining balance: " << Balance << std::endl;
+                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                        std::cout << "Price: " << player.getPrice() << std::endl;
+                        std::cout << "Are you sure? (y/n) ";
+                        std::cin >> yes_or_no;
+                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        {
+                            ok = true;
+                            Balance -= player.getPrice();
+                            teamvalue += player.getPrice();
+                            teamovr += player.getOverall();
+                            std::cout << "Remaining balance: " << Balance << std::endl;
+                        }
+                        else if (tolower(yes_or_no) == 'n')
+                            std::cout << "Let's choose again, then." << std::endl;
+                        else
+                            std::cout << "You can't really do that :) Try again?" << std::endl;
                     }
-                    else if (tolower(yes_or_no) == 'n')
-                        std::cout << "Let's choose again, then." << std::endl;
-                    else
-                        std::cout << "You can't really do that :) Try again?" << std::endl;
-                }
-            break;
-        }
+                break;
+            }
 
-        case (6):
-        {
-            for (const auto &player : Arsenal.get_team_players())
-                if (player.getPosition() == "GK")
-                {
-                    std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                    std::cout << "Price: " << player.getPrice() << std::endl;
-                    std::cout << "Are you sure? (y/n) ";
-                    std::cin >> yes_or_no;
-                    if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+            case (6):
+            {
+                for (const auto &player : Arsenal.get_team_players())
+                    if (player.getPosition() == "GK")
                     {
-                        ok = true;
-                        Balance -= player.getPrice();
-                        std::cout << "Remaining balance: " << Balance << std::endl;
+                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                        std::cout << "Price: " << player.getPrice() << std::endl;
+                        std::cout << "Are you sure? (y/n) ";
+                        std::cin >> yes_or_no;
+                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        {
+                            ok = true;
+                            Balance -= player.getPrice();
+                            teamvalue += player.getPrice();
+                            teamovr += player.getOverall();
+                            std::cout << "Remaining balance: " << Balance << std::endl;
+                        }
+                        else if (tolower(yes_or_no) == 'n')
+                            std::cout << "Let's choose again, then." << std::endl;
+                        else
+                            std::cout << "You can't really do that :) Try again?" << std::endl;
                     }
-                    else if (tolower(yes_or_no) == 'n')
-                        std::cout << "Let's choose again, then." << std::endl;
-                    else
-                        std::cout << "You can't really do that :) Try again?" << std::endl;
-                }
-            break;
-        }
-        case (7):
-        {
-            for (const auto &player : Leicester.get_team_players())
-                if (player.getPosition() == "GK")
-                {
-                    std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                    std::cout << "Price: " << player.getPrice() << std::endl;
-                    std::cout << "Are you sure? (y/n) ";
-                    std::cin >> yes_or_no;
-                    if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                break;
+            }
+            case (7):
+            {
+                for (const auto &player : Leicester.get_team_players())
+                    if (player.getPosition() == "GK")
                     {
-                        ok = true;
-                        Balance -= player.getPrice();
-                        std::cout << "Remaining balance: " << Balance << std::endl;
+                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                        std::cout << "Price: " << player.getPrice() << std::endl;
+                        std::cout << "Are you sure? (y/n) ";
+                        std::cin >> yes_or_no;
+                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        {
+                            ok = true;
+                            Balance -= player.getPrice();
+                            teamvalue += player.getPrice();
+                            teamovr += player.getOverall();
+                            std::cout << "Remaining balance: " << Balance << std::endl;
+                        }
+                        else if (tolower(yes_or_no) == 'n')
+                            std::cout << "Let's choose again, then." << std::endl;
+                        else
+                            std::cout << "You can't really do that :) Try again?" << std::endl;
                     }
-                    else if (tolower(yes_or_no) == 'n')
-                        std::cout << "Let's choose again, then." << std::endl;
-                    else
-                        std::cout << "You can't really do that :) Try again?" << std::endl;
-                }
-            break;
-        }
-        case (8):
-        {
-            for (const auto &player : WestHam.get_team_players())
-                if (player.getPosition() == "GK")
-                {
-                    std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                    std::cout << "Price: " << player.getPrice() << std::endl;
-                    std::cout << "Are you sure? (y/n) ";
-                    std::cin >> yes_or_no;
-                    if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                break;
+            }
+            case (8):
+            {
+                for (const auto &player : WestHam.get_team_players())
+                    if (player.getPosition() == "GK")
                     {
-                        ok = true;
-                        Balance -= player.getPrice();
-                        std::cout << "Remaining balance: " << Balance << std::endl;
+                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                        std::cout << "Price: " << player.getPrice() << std::endl;
+                        std::cout << "Are you sure? (y/n) ";
+                        std::cin >> yes_or_no;
+                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        {
+                            ok = true;
+                            Balance -= player.getPrice();
+                            teamvalue += player.getPrice();
+                            teamovr += player.getOverall();
+                            std::cout << "Remaining balance: " << Balance << std::endl;
+                        }
+                        else if (tolower(yes_or_no) == 'n')
+                            std::cout << "Let's choose again, then." << std::endl;
+                        else
+                            std::cout << "You can't really do that :) Try again?" << std::endl;
                     }
-                    else if (tolower(yes_or_no) == 'n')
-                        std::cout << "Let's choose again, then." << std::endl;
-                    else
-                        std::cout << "You can't really do that :) Try again?" << std::endl;
-                }
-            break;
-        }
-        case (9):
-        {
-            for (const auto &player : Brighton.get_team_players())
-                if (player.getPosition() == "GK")
-                {
-                    std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                    std::cout << "Price: " << player.getPrice() << std::endl;
-                    std::cout << "Are you sure? (y/n) ";
-                    std::cin >> yes_or_no;
-                    if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                break;
+            }
+            case (9):
+            {
+                for (const auto &player : Brighton.get_team_players())
+                    if (player.getPosition() == "GK")
                     {
-                        ok = true;
-                        Balance -= player.getPrice();
-                        std::cout << "Remaining balance: " << Balance << std::endl;
+                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                        std::cout << "Price: " << player.getPrice() << std::endl;
+                        std::cout << "Are you sure? (y/n) ";
+                        std::cin >> yes_or_no;
+                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        {
+                            ok = true;
+                            Balance -= player.getPrice();
+                            teamvalue += player.getPrice();
+                            teamovr += player.getOverall();
+                            std::cout << "Remaining balance: " << Balance << std::endl;
+                        }
+                        else if (tolower(yes_or_no) == 'n')
+                            std::cout << "Let's choose again, then." << std::endl;
+                        else
+                            std::cout << "You can't really do that :) Try again?" << std::endl;
                     }
-                    else if (tolower(yes_or_no) == 'n')
-                        std::cout << "Let's choose again, then." << std::endl;
-                    else
-                        std::cout << "You can't really do that :) Try again?" << std::endl;
-                }
-            break;
-        }
-        case (10):
-        {
-            for (const auto &player : Wolves.get_team_players())
-                if (player.getPosition() == "GK")
-                {
-                    std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                    std::cout << "Price: " << player.getPrice() << std::endl;
-                    std::cout << "Are you sure? (y/n) ";
-                    std::cin >> yes_or_no;
-                    if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                break;
+            }
+            case (10):
+            {
+                for (const auto &player : Wolves.get_team_players())
+                    if (player.getPosition() == "GK")
                     {
-                        ok = true;
-                        Balance -= player.getPrice();
-                        std::cout << "Remaining balance: " << Balance << std::endl;
+                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                        std::cout << "Price: " << player.getPrice() << std::endl;
+                        std::cout << "Are you sure? (y/n) ";
+                        std::cin >> yes_or_no;
+                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        {
+                            ok = true;
+                            Balance -= player.getPrice();
+                            teamvalue += player.getPrice();
+                            teamovr += player.getOverall();
+                            std::cout << "Remaining balance: " << Balance << std::endl;
+                        }
+                        else if (tolower(yes_or_no) == 'n')
+                            std::cout << "Let's choose again, then." << std::endl;
+                        else
+                            std::cout << "You can't really do that :) Try again?" << std::endl;
                     }
-                    else if (tolower(yes_or_no) == 'n')
-                        std::cout << "Let's choose again, then." << std::endl;
-                    else
-                        std::cout << "You can't really do that :) Try again?" << std::endl;
-                }
-            break;
-        }
-        case (11):
-        {
-            for (const auto &player : Newcastle.get_team_players())
-                if (player.getPosition() == "GK")
-                {
-                    std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                    std::cout << "Price: " << player.getPrice() << std::endl;
-                    std::cout << "Are you sure? (y/n) ";
-                    std::cin >> yes_or_no;
-                    if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                break;
+            }
+            case (11):
+            {
+                for (const auto &player : Newcastle.get_team_players())
+                    if (player.getPosition() == "GK")
                     {
-                        ok = true;
-                        Balance -= player.getPrice();
-                        std::cout << "Remaining balance: " << Balance << std::endl;
+                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                        std::cout << "Price: " << player.getPrice() << std::endl;
+                        std::cout << "Are you sure? (y/n) ";
+                        std::cin >> yes_or_no;
+                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        {
+                            ok = true;
+                            Balance -= player.getPrice();
+                            teamvalue += player.getPrice();
+                            teamovr += player.getOverall();
+                            std::cout << "Remaining balance: " << Balance << std::endl;
+                        }
+                        else if (tolower(yes_or_no) == 'n')
+                            std::cout << "Let's choose again, then." << std::endl;
+                        else
+                            std::cout << "You can't really do that :) Try again?" << std::endl;
                     }
-                    else if (tolower(yes_or_no) == 'n')
-                        std::cout << "Let's choose again, then." << std::endl;
-                    else
-                        std::cout << "You can't really do that :) Try again?" << std::endl;
-                }
-            break;
-        }
-        case (12):
-        {
-            for (const auto &player : CrystalPalace.get_team_players())
-                if (player.getPosition() == "GK")
-                {
-                    std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                    std::cout << "Price: " << player.getPrice() << std::endl;
-                    std::cout << "Are you sure? (y/n) ";
-                    std::cin >> yes_or_no;
-                    if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                break;
+            }
+            case (12):
+            {
+                for (const auto &player : CrystalPalace.get_team_players())
+                    if (player.getPosition() == "GK")
                     {
-                        ok = true;
-                        Balance -= player.getPrice();
-                        std::cout << "Remaining balance: " << Balance << std::endl;
+                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                        std::cout << "Price: " << player.getPrice() << std::endl;
+                        std::cout << "Are you sure? (y/n) ";
+                        std::cin >> yes_or_no;
+                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        {
+                            ok = true;
+                            Balance -= player.getPrice();
+                            teamvalue += player.getPrice();
+                            teamovr += player.getOverall();
+                            std::cout << "Remaining balance: " << Balance << std::endl;
+                        }
+                        else if (tolower(yes_or_no) == 'n')
+                            std::cout << "Let's choose again, then." << std::endl;
+                        else
+                            std::cout << "You can't really do that :) Try again?" << std::endl;
                     }
-                    else if (tolower(yes_or_no) == 'n')
-                        std::cout << "Let's choose again, then." << std::endl;
-                    else
-                        std::cout << "You can't really do that :) Try again?" << std::endl;
-                }
-            break;
-        }
-        case (13):
-        {
-            for (const auto &player : Brentford.get_team_players())
-                if (player.getPosition() == "GK")
-                {
-                    std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                    std::cout << "Price: " << player.getPrice() << std::endl;
-                    std::cout << "Are you sure? (y/n) ";
-                    std::cin >> yes_or_no;
-                    if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                break;
+            }
+            case (13):
+            {
+                for (const auto &player : Brentford.get_team_players())
+                    if (player.getPosition() == "GK")
                     {
-                        ok = true;
-                        Balance -= player.getPrice();
-                        std::cout << "Remaining balance: " << Balance << std::endl;
+                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                        std::cout << "Price: " << player.getPrice() << std::endl;
+                        std::cout << "Are you sure? (y/n) ";
+                        std::cin >> yes_or_no;
+                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        {
+                            ok = true;
+                            Balance -= player.getPrice();
+                            teamvalue += player.getPrice();
+                            teamovr += player.getOverall();
+                            std::cout << "Remaining balance: " << Balance << std::endl;
+                        }
+                        else if (tolower(yes_or_no) == 'n')
+                            std::cout << "Let's choose again, then." << std::endl;
+                        else
+                            std::cout << "You can't really do that :) Try again?" << std::endl;
                     }
-                    else if (tolower(yes_or_no) == 'n')
-                        std::cout << "Let's choose again, then." << std::endl;
-                    else
-                        std::cout << "You can't really do that :) Try again?" << std::endl;
-                }
-            break;
-        }
-        case (14):
-        {
-            for (const auto &player : AstonVilla.get_team_players())
-                if (player.getPosition() == "GK")
-                {
-                    std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                    std::cout << "Price: " << player.getPrice() << std::endl;
-                    std::cout << "Are you sure? (y/n) ";
-                    std::cin >> yes_or_no;
-                    if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                break;
+            }
+            case (14):
+            {
+                for (const auto &player : AstonVilla.get_team_players())
+                    if (player.getPosition() == "GK")
                     {
-                        ok = true;
-                        Balance -= player.getPrice();
-                        std::cout << "Remaining balance: " << Balance << std::endl;
+                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                        std::cout << "Price: " << player.getPrice() << std::endl;
+                        std::cout << "Are you sure? (y/n) ";
+                        std::cin >> yes_or_no;
+                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        {
+                            ok = true;
+                            Balance -= player.getPrice();
+                            teamvalue += player.getPrice();
+                            teamovr += player.getOverall();
+                            std::cout << "Remaining balance: " << Balance << std::endl;
+                        }
+                        else if (tolower(yes_or_no) == 'n')
+                            std::cout << "Let's choose again, then." << std::endl;
+                        else
+                            std::cout << "You can't really do that :) Try again?" << std::endl;
                     }
-                    else if (tolower(yes_or_no) == 'n')
-                        std::cout << "Let's choose again, then." << std::endl;
-                    else
-                        std::cout << "You can't really do that :) Try again?" << std::endl;
-                }
-            break;
-        }
-        case (15):
-        {
-            for (const auto &player : Southampton.get_team_players())
-                if (player.getPosition() == "GK")
-                {
-                    std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                    std::cout << "Price: " << player.getPrice() << std::endl;
-                    std::cout << "Are you sure? (y/n) ";
-                    std::cin >> yes_or_no;
-                    if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                break;
+            }
+            case (15):
+            {
+                for (const auto &player : Southampton.get_team_players())
+                    if (player.getPosition() == "GK")
                     {
-                        ok = true;
-                        Balance -= player.getPrice();
-                        std::cout << "Remaining balance: " << Balance << std::endl;
+                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                        std::cout << "Price: " << player.getPrice() << std::endl;
+                        std::cout << "Are you sure? (y/n) ";
+                        std::cin >> yes_or_no;
+                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        {
+                            ok = true;
+                            Balance -= player.getPrice();
+                            teamvalue += player.getPrice();
+                            teamovr += player.getOverall();
+                            std::cout << "Remaining balance: " << Balance << std::endl;
+                        }
+                        else if (tolower(yes_or_no) == 'n')
+                            std::cout << "Let's choose again, then." << std::endl;
+                        else
+                            std::cout << "You can't really do that :) Try again?" << std::endl;
                     }
-                    else if (tolower(yes_or_no) == 'n')
-                        std::cout << "Let's choose again, then." << std::endl;
-                    else
-                        std::cout << "You can't really do that :) Try again?" << std::endl;
-                }
-            break;
-        }
-        case (16):
-        {
-            for (const auto &player : Everton.get_team_players())
-                if (player.getPosition() == "GK")
-                {
-                    std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                    std::cout << "Price: " << player.getPrice() << std::endl;
-                    std::cout << "Are you sure? (y/n) ";
-                    std::cin >> yes_or_no;
-                    if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                break;
+            }
+            case (16):
+            {
+                for (const auto &player : Everton.get_team_players())
+                    if (player.getPosition() == "GK")
                     {
-                        ok = true;
-                        Balance -= player.getPrice();
-                        std::cout << "Remaining balance: " << Balance << std::endl;
+                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                        std::cout << "Price: " << player.getPrice() << std::endl;
+                        std::cout << "Are you sure? (y/n) ";
+                        std::cin >> yes_or_no;
+                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        {
+                            ok = true;
+                            Balance -= player.getPrice();
+                            teamvalue += player.getPrice();
+                            teamovr += player.getOverall();
+                            std::cout << "Remaining balance: " << Balance << std::endl;
+                        }
+                        else if (tolower(yes_or_no) == 'n')
+                            std::cout << "Let's choose again, then." << std::endl;
+                        else
+                            std::cout << "You can't really do that :) Try again?" << std::endl;
                     }
-                    else if (tolower(yes_or_no) == 'n')
-                        std::cout << "Let's choose again, then." << std::endl;
-                    else
-                        std::cout << "You can't really do that :) Try again?" << std::endl;
-                }
-            break;
-        }
-        case (17):
-        {
-            for (const auto &player : Leeds.get_team_players())
-                if (player.getPosition() == "GK")
-                {
-                    std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                    std::cout << "Price: " << player.getPrice() << std::endl;
-                    std::cout << "Are you sure? (y/n) ";
-                    std::cin >> yes_or_no;
-                    if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                break;
+            }
+            case (17):
+            {
+                for (const auto &player : Leeds.get_team_players())
+                    if (player.getPosition() == "GK")
                     {
-                        ok = true;
-                        Balance -= player.getPrice();
-                        std::cout << "Remaining balance: " << Balance << std::endl;
+                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                        std::cout << "Price: " << player.getPrice() << std::endl;
+                        std::cout << "Are you sure? (y/n) ";
+                        std::cin >> yes_or_no;
+                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        {
+                            ok = true;
+                            Balance -= player.getPrice();
+                            teamvalue += player.getPrice();
+                            teamovr += player.getOverall();
+                            std::cout << "Remaining balance: " << Balance << std::endl;
+                        }
+                        else if (tolower(yes_or_no) == 'n')
+                            std::cout << "Let's choose again, then." << std::endl;
+                        else
+                            std::cout << "You can't really do that :) Try again?" << std::endl;
                     }
-                    else if (tolower(yes_or_no) == 'n')
-                        std::cout << "Let's choose again, then." << std::endl;
-                    else
-                        std::cout << "You can't really do that :) Try again?" << std::endl;
-                }
-            break;
-        }
-        case (18):
-        {
-            for (const auto &player : Burnley.get_team_players())
-                if (player.getPosition() == "GK")
-                {
-                    std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                    std::cout << "Price: " << player.getPrice() << std::endl;
-                    std::cout << "Are you sure? (y/n) ";
-                    std::cin >> yes_or_no;
-                    if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                break;
+            }
+            case (18):
+            {
+                for (const auto &player : Burnley.get_team_players())
+                    if (player.getPosition() == "GK")
                     {
-                        ok = true;
-                        Balance -= player.getPrice();
-                        std::cout << "Remaining balance: " << Balance << std::endl;
+                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                        std::cout << "Price: " << player.getPrice() << std::endl;
+                        std::cout << "Are you sure? (y/n) ";
+                        std::cin >> yes_or_no;
+                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        {
+                            ok = true;
+                            Balance -= player.getPrice();
+                            teamvalue += player.getPrice();
+                            teamovr += player.getOverall();
+                            std::cout << "Remaining balance: " << Balance << std::endl;
+                        }
+                        else if (tolower(yes_or_no) == 'n')
+                            std::cout << "Let's choose again, then." << std::endl;
+                        else
+                            std::cout << "You can't really do that :) Try again?" << std::endl;
                     }
-                    else if (tolower(yes_or_no) == 'n')
-                        std::cout << "Let's choose again, then." << std::endl;
-                    else
-                        std::cout << "You can't really do that :) Try again?" << std::endl;
-                }
-            break;
-        }
-        case (19):
-        {
-            for (const auto &player : Watford.get_team_players())
-                if (player.getPosition() == "GK")
-                {
-                    std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                    std::cout << "Price: " << player.getPrice() << std::endl;
-                    std::cout << "Are you sure? (y/n) ";
-                    std::cin >> yes_or_no;
-                    if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                break;
+            }
+            case (19):
+            {
+                for (const auto &player : Watford.get_team_players())
+                    if (player.getPosition() == "GK")
                     {
-                        ok = true;
-                        Balance -= player.getPrice();
-                        std::cout << "Remaining balance: " << Balance << std::endl;
+                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                        std::cout << "Price: " << player.getPrice() << std::endl;
+                        std::cout << "Are you sure? (y/n) ";
+                        std::cin >> yes_or_no;
+                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        {
+                            ok = true;
+                            Balance -= player.getPrice();
+                            teamvalue += player.getPrice();
+                            teamovr += player.getOverall();
+                            std::cout << "Remaining balance: " << Balance << std::endl;
+                        }
+                        else if (tolower(yes_or_no) == 'n')
+                            std::cout << "Let's choose again, then." << std::endl;
+                        else
+                            std::cout << "You can't really do that :) Try again?" << std::endl;
                     }
-                    else if (tolower(yes_or_no) == 'n')
-                        std::cout << "Let's choose again, then." << std::endl;
-                    else
-                        std::cout << "You can't really do that :) Try again?" << std::endl;
-                }
-            break;
-        }
-        case (20):
-        {
-            for (const auto &player : Norwich.get_team_players())
-                if (player.getPosition() == "GK")
-                {
-                    std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                    std::cout << "Price: " << player.getPrice() << std::endl;
-                    std::cout << "Are you sure? (y/n) ";
-                    std::cin >> yes_or_no;
-                    if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                break;
+            }
+            case (20):
+            {
+                for (const auto &player : Norwich.get_team_players())
+                    if (player.getPosition() == "GK")
                     {
-                        ok = true;
-                        Balance -= player.getPrice();
-                        std::cout << "Remaining balance: " << Balance << std::endl;
+                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                        std::cout << "Price: " << player.getPrice() << std::endl;
+                        std::cout << "Are you sure? (y/n) ";
+                        std::cin >> yes_or_no;
+                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        {
+                            ok = true;
+                            Balance -= player.getPrice();
+                            teamvalue += player.getPrice();
+                            teamovr += player.getOverall();
+                            std::cout << "Remaining balance: " << Balance << std::endl;
+                        }
+                        else if (tolower(yes_or_no) == 'n')
+                            std::cout << "Let's choose again, then." << std::endl;
+                        else if (Balance < player.getPrice())
+                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                        else
+                            std::cout << "You can't really do that :) Try again?" << std::endl;
                     }
-                    else if (tolower(yes_or_no) == 'n')
-                        std::cout << "Let's choose again, then." << std::endl;
-                    else if (Balance < player.getPrice())
-                        std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                    else
-                        std::cout << "You can't really do that :) Try again?" << std::endl;
-                }
-            break;
-        }
+                break;
+            }
 
-        default:
-        {
-            std::cout << "You can't really do that. Try again? :)" << std::endl;
-            break;
-        }
-        }
+            default:
+            {
+                std::cout << "You can't really do that. Try again? :)" << std::endl;
+                break;
+            }
+            }
+        else
+            std::cout << key << " is not a number. Try again." << std::endl;
     }
     int index = 1;
     std::string football_player_name;
     for (int i = 1; i <= fundasi; i++)
     {
-        std::cout << "Defender number " << i << ". Select the team he's currently playing for: " << std::endl;
-        std::cout << "1. Tottenham" << std::endl;
-        std::cout << "2. Manchester City" << std::endl;
-        std::cout << "3. Chelsea" << std::endl;
-        std::cout << "4. Manchester United" << std::endl;
-        std::cout << "5. Liverpool" << std::endl;
-        std::cout << "6. Arsenal" << std::endl;
-        std::cout << "7. Leicester City" << std::endl;
-        std::cout << "8. West Ham United" << std::endl;
-        std::cout << "9. Brighton" << std::endl;
-        std::cout << "10. Wolves" << std::endl;
-        std::cout << "11. Newcastle" << std::endl;
-        std::cout << "12. Crystal Palace" << std::endl;
-        std::cout << "13. Brentford" << std::endl;
-        std::cout << "14. Aston Villa" << std::endl;
-        std::cout << "15. Southampton" << std::endl;
-        std::cout << "16. Everton" << std::endl;
-        std::cout << "17. Leeds" << std::endl;
-        std::cout << "18. Burnley" << std::endl;
-        std::cout << "19. Watford" << std::endl;
-        std::cout << "20. Norwich" << std::endl;
-        std::cin >> key;
-        switch (key)
+        ok2 = false;
+        while (!ok2)
         {
-        case (1):
-        {
-            index = 1;
-            for (const auto &player : Tottenham.get_team_players())
-                if (player.getPosition() == "DEF")
+            std::cout << "Defender number " << i << ". Select the team he's currently playing for: " << std::endl;
+            std::cout << "1. Tottenham" << std::endl;
+            std::cout << "2. Manchester City" << std::endl;
+            std::cout << "3. Chelsea" << std::endl;
+            std::cout << "4. Manchester United" << std::endl;
+            std::cout << "5. Liverpool" << std::endl;
+            std::cout << "6. Arsenal" << std::endl;
+            std::cout << "7. Leicester City" << std::endl;
+            std::cout << "8. West Ham United" << std::endl;
+            std::cout << "9. Brighton" << std::endl;
+            std::cout << "10. Wolves" << std::endl;
+            std::cout << "11. Newcastle" << std::endl;
+            std::cout << "12. Crystal Palace" << std::endl;
+            std::cout << "13. Brentford" << std::endl;
+            std::cout << "14. Aston Villa" << std::endl;
+            std::cout << "15. Southampton" << std::endl;
+            std::cout << "16. Everton" << std::endl;
+            std::cout << "17. Leeds" << std::endl;
+            std::cout << "18. Burnley" << std::endl;
+            std::cout << "19. Watford" << std::endl;
+            std::cout << "20. Norwich" << std::endl;
+            std::cin >> key;
+            if (isNumber(key) == true)
+                switch (stoi(key))
                 {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Tottenham.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                case (1):
+                {
+                    index = 1;
+                    for (const auto &player : Tottenham.get_team_players())
+                        if (player.getPosition() == "DEF")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+                    ok = false;
+                    while (!ok)
                     {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        for (const auto &player : Tottenham.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
                         {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
                         }
                     }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
+                    break;
                 }
-            }
-            break;
-        }
-        case (2):
-        {
-            index = 1;
-            for (const auto &player : ManchesterCity.get_team_players())
-                if (player.getPosition() == "DEF")
+                case (2):
                 {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : ManchesterCity.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                    index = 1;
+                    for (const auto &player : ManchesterCity.get_team_players())
+                        if (player.getPosition() == "DEF")
                         {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
                         }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (3):
-        {
-            index = 1;
-            for (const auto &player : Chelsea.get_team_players())
-                if (player.getPosition() == "DEF")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Chelsea.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (4):
-        {
-            index = 1;
-            for (const auto &player : ManchesterUnited.get_team_players())
-                if (player.getPosition() == "DEF")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : ManchesterUnited.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (5):
-        {
-            index = 1;
-            for (const auto &player : Liverpool.get_team_players())
-                if (player.getPosition() == "DEF")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Liverpool.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
 
-        case (6):
-        {
-            index = 1;
-            for (const auto &player : Arsenal.get_team_players())
-                if (player.getPosition() == "DEF")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Arsenal.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                    ok = false;
+                    while (!ok)
                     {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        for (const auto &player : ManchesterCity.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
                         {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
                         }
                     }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
+                    break;
                 }
-            }
-            break;
-        }
-        case (7):
-        {
-            index = 1;
-            for (const auto &player : Leicester.get_team_players())
-                if (player.getPosition() == "DEF")
+                case (3):
                 {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Leicester.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                    index = 1;
+                    for (const auto &player : Chelsea.get_team_players())
+                        if (player.getPosition() == "DEF")
                         {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
                         }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (8):
-        {
-            index = 1;
-            for (const auto &player : WestHam.get_team_players())
-                if (player.getPosition() == "DEF")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : WestHam.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (9):
-        {
-            index = 1;
-            for (const auto &player : Brighton.get_team_players())
-                if (player.getPosition() == "DEF")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Brighton.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (10):
-        {
-            index = 1;
-            for (const auto &player : Wolves.get_team_players())
-                if (player.getPosition() == "DEF")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Wolves.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (11):
-        {
-            index = 1;
-            for (const auto &player : Newcastle.get_team_players())
-                if (player.getPosition() == "DEF")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Newcastle.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (12):
-        {
-            index = 1;
-            for (const auto &player : CrystalPalace.get_team_players())
-                if (player.getPosition() == "DEF")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : CrystalPalace.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (13):
-        {
-            index = 1;
-            for (const auto &player : Brentford.get_team_players())
-                if (player.getPosition() == "DEF")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Brentford.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (14):
-        {
-            index = 1;
-            for (const auto &player : AstonVilla.get_team_players())
-                if (player.getPosition() == "DEF")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : AstonVilla.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (15):
-        {
-            index = 1;
-            for (const auto &player : Southampton.get_team_players())
-                if (player.getPosition() == "DEF")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Southampton.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (16):
-        {
-            index = 1;
-            for (const auto &player : Everton.get_team_players())
-                if (player.getPosition() == "DEF")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Everton.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (17):
-        {
-            index = 1;
-            for (const auto &player : Leeds.get_team_players())
-                if (player.getPosition() == "DEF")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Leeds.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (18):
-        {
-            index = 1;
-            for (const auto &player : Burnley.get_team_players())
-                if (player.getPosition() == "DEF")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Burnley.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (19):
-        {
-            index = 1;
-            for (const auto &player : Watford.get_team_players())
-                if (player.getPosition() == "DEF")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Watford.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (20):
-        {
-            index = 1;
-            for (const auto &player : Norwich.get_team_players())
-                if (player.getPosition() == "DEF")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Norwich.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
 
-        default:
-        {
-            std::cout << "You can't really do that. Try again? :)" << std::endl;
-            break;
-        }
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Chelsea.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (4):
+                {
+                    index = 1;
+                    for (const auto &player : ManchesterUnited.get_team_players())
+                        if (player.getPosition() == "DEF")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : ManchesterUnited.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (5):
+                {
+                    index = 1;
+                    for (const auto &player : Liverpool.get_team_players())
+                        if (player.getPosition() == "DEF")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Liverpool.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+
+                case (6):
+                {
+                    index = 1;
+                    for (const auto &player : Arsenal.get_team_players())
+                        if (player.getPosition() == "DEF")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Arsenal.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (7):
+                {
+                    index = 1;
+                    for (const auto &player : Leicester.get_team_players())
+                        if (player.getPosition() == "DEF")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Leicester.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (8):
+                {
+                    index = 1;
+                    for (const auto &player : WestHam.get_team_players())
+                        if (player.getPosition() == "DEF")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : WestHam.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (9):
+                {
+                    index = 1;
+                    for (const auto &player : Brighton.get_team_players())
+                        if (player.getPosition() == "DEF")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Brighton.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (10):
+                {
+                    index = 1;
+                    for (const auto &player : Wolves.get_team_players())
+                        if (player.getPosition() == "DEF")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Wolves.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (11):
+                {
+                    index = 1;
+                    for (const auto &player : Newcastle.get_team_players())
+                        if (player.getPosition() == "DEF")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Newcastle.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (12):
+                {
+                    index = 1;
+                    for (const auto &player : CrystalPalace.get_team_players())
+                        if (player.getPosition() == "DEF")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : CrystalPalace.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (13):
+                {
+                    index = 1;
+                    for (const auto &player : Brentford.get_team_players())
+                        if (player.getPosition() == "DEF")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Brentford.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (14):
+                {
+                    index = 1;
+                    for (const auto &player : AstonVilla.get_team_players())
+                        if (player.getPosition() == "DEF")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : AstonVilla.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (15):
+                {
+                    index = 1;
+                    for (const auto &player : Southampton.get_team_players())
+                        if (player.getPosition() == "DEF")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Southampton.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (16):
+                {
+                    index = 1;
+                    for (const auto &player : Everton.get_team_players())
+                        if (player.getPosition() == "DEF")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Everton.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (17):
+                {
+                    index = 1;
+                    for (const auto &player : Leeds.get_team_players())
+                        if (player.getPosition() == "DEF")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Leeds.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (18):
+                {
+                    index = 1;
+                    for (const auto &player : Burnley.get_team_players())
+                        if (player.getPosition() == "DEF")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Burnley.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (19):
+                {
+                    index = 1;
+                    for (const auto &player : Watford.get_team_players())
+                        if (player.getPosition() == "DEF")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Watford.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (20):
+                {
+                    index = 1;
+                    for (const auto &player : Norwich.get_team_players())
+                        if (player.getPosition() == "DEF")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Norwich.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+
+                default:
+                {
+                    std::cout << "You can't really do that. Try again? :)" << std::endl;
+                    break;
+                }
+                }
+            else
+                std::cout << key << " is not a number. Try again.\n";
         }
     }
     for (int i = 1; i <= mijlocasi; i++)
     {
-        std::cout << "Midfielder number " << i << ". " << std::endl;
-        std::cout << "Select the team he's currently playing for: " << std::endl;
-        std::cout << "1. Tottenham" << std::endl;
-        std::cout << "2. Manchester City" << std::endl;
-        std::cout << "3. Chelsea" << std::endl;
-        std::cout << "4. Manchester United" << std::endl;
-        std::cout << "5. Liverpool" << std::endl;
-        std::cout << "6. Arsenal" << std::endl;
-        std::cout << "7. Leicester City" << std::endl;
-        std::cout << "8. West Ham United" << std::endl;
-        std::cout << "9. Brighton" << std::endl;
-        std::cout << "10. Wolves" << std::endl;
-        std::cout << "11. Newcastle" << std::endl;
-        std::cout << "12. Crystal Palace" << std::endl;
-        std::cout << "13. Brentford" << std::endl;
-        std::cout << "14. Aston Villa" << std::endl;
-        std::cout << "15. Southampton" << std::endl;
-        std::cout << "16. Everton" << std::endl;
-        std::cout << "17. Leeds" << std::endl;
-        std::cout << "18. Burnley" << std::endl;
-        std::cout << "19. Watford" << std::endl;
-        std::cout << "20. Norwich" << std::endl;
-        std::cin >> key;
-        switch (key)
+        ok2 = false;
+        while (!ok2)
         {
-        case (1):
-        {
-            index = 1;
-            for (const auto &player : Tottenham.get_team_players())
-                if (player.getPosition() == "MID")
+            std::cout << "Midfielder number " << i << ". " << std::endl;
+            std::cout << "Select the team he's currently playing for: " << std::endl;
+            std::cout << "1. Tottenham" << std::endl;
+            std::cout << "2. Manchester City" << std::endl;
+            std::cout << "3. Chelsea" << std::endl;
+            std::cout << "4. Manchester United" << std::endl;
+            std::cout << "5. Liverpool" << std::endl;
+            std::cout << "6. Arsenal" << std::endl;
+            std::cout << "7. Leicester City" << std::endl;
+            std::cout << "8. West Ham United" << std::endl;
+            std::cout << "9. Brighton" << std::endl;
+            std::cout << "10. Wolves" << std::endl;
+            std::cout << "11. Newcastle" << std::endl;
+            std::cout << "12. Crystal Palace" << std::endl;
+            std::cout << "13. Brentford" << std::endl;
+            std::cout << "14. Aston Villa" << std::endl;
+            std::cout << "15. Southampton" << std::endl;
+            std::cout << "16. Everton" << std::endl;
+            std::cout << "17. Leeds" << std::endl;
+            std::cout << "18. Burnley" << std::endl;
+            std::cout << "19. Watford" << std::endl;
+            std::cout << "20. Norwich" << std::endl;
+            std::cin >> key;
+            if (isNumber(key) == true)
+                switch (stoi(key))
                 {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Tottenham.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
+                case (1):
                 {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (2):
-        {
-            index = 1;
-            for (const auto &player : ManchesterCity.get_team_players())
-                if (player.getPosition() == "MID")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : ManchesterCity.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                    index = 1;
+                    for (const auto &player : Tottenham.get_team_players())
+                        if (player.getPosition() == "MID")
                         {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
                         }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (3):
-        {
-            index = 1;
-            for (const auto &player : Chelsea.get_team_players())
-                if (player.getPosition() == "MID")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Chelsea.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (4):
-        {
-            index = 1;
-            for (const auto &player : ManchesterUnited.get_team_players())
-                if (player.getPosition() == "MID")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : ManchesterUnited.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (5):
-        {
-            index = 1;
-            for (const auto &player : Liverpool.get_team_players())
-                if (player.getPosition() == "MID")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Liverpool.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
 
-        case (6):
-        {
-            index = 1;
-            for (const auto &player : Arsenal.get_team_players())
-                if (player.getPosition() == "MID")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Arsenal.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
+                    ok = false;
+                    while (!ok)
                     {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                        for (const auto &player : Tottenham.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
                         {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
                         }
                     }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
+                    break;
                 }
-            }
-            break;
-        }
-        case (7):
-        {
-            index = 1;
-            for (const auto &player : Leicester.get_team_players())
-                if (player.getPosition() == "MID")
+                case (2):
                 {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Leicester.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                    index = 1;
+                    for (const auto &player : ManchesterCity.get_team_players())
+                        if (player.getPosition() == "MID")
                         {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
                         }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (8):
-        {
-            index = 1;
-            for (const auto &player : WestHam.get_team_players())
-                if (player.getPosition() == "MID")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : WestHam.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (9):
-        {
-            index = 1;
-            for (const auto &player : Brighton.get_team_players())
-                if (player.getPosition() == "MID")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Brighton.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (10):
-        {
-            index = 1;
-            for (const auto &player : Wolves.get_team_players())
-                if (player.getPosition() == "MID")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Wolves.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (11):
-        {
-            index = 1;
-            for (const auto &player : Newcastle.get_team_players())
-                if (player.getPosition() == "MID")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Newcastle.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (12):
-        {
-            index = 1;
-            for (const auto &player : CrystalPalace.get_team_players())
-                if (player.getPosition() == "MID")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : CrystalPalace.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (13):
-        {
-            index = 1;
-            for (const auto &player : Brentford.get_team_players())
-                if (player.getPosition() == "MID")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Brentford.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (14):
-        {
-            index = 1;
-            for (const auto &player : AstonVilla.get_team_players())
-                if (player.getPosition() == "MID")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : AstonVilla.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (15):
-        {
-            index = 1;
-            for (const auto &player : Southampton.get_team_players())
-                if (player.getPosition() == "MID")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Southampton.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (16):
-        {
-            index = 1;
-            for (const auto &player : Everton.get_team_players())
-                if (player.getPosition() == "MID")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Everton.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (17):
-        {
-            index = 1;
-            for (const auto &player : Leeds.get_team_players())
-                if (player.getPosition() == "MID")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Leeds.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (18):
-        {
-            index = 1;
-            for (const auto &player : Burnley.get_team_players())
-                if (player.getPosition() == "MID")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Burnley.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (19):
-        {
-            index = 1;
-            for (const auto &player : Watford.get_team_players())
-                if (player.getPosition() == "MID")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Watford.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
-        case (20):
-        {
-            index = 1;
-            for (const auto &player : Norwich.get_team_players())
-                if (player.getPosition() == "MID")
-                {
-                    std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
-                    index++;
-                }
-            std::cout << "Type the name of the player you want to choose: " << std::endl;
-            std::cin >> football_player_name;
-            ok = false;
-            while (!ok)
-            {
-                for (const auto &player : Norwich.get_team_players())
-                    if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
-                    {
-                        std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
-                        std::cout << "Price: " << player.getPrice() << std::endl;
-                        std::cout << "Are you sure? (y/n) ";
-                        std::cin >> yes_or_no;
-                        if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
-                        {
-                            ok = true;
-                            Balance -= player.getPrice();
-                            std::cout << "Remaining balance: " << Balance << std::endl;
-                            break;
-                        }
-                        else if (tolower(yes_or_no) == 'n')
-                        {
-                            std::cout << "Let's choose again, then." << std::endl;
-                            break;
-                        }
-                        else if (Balance < player.getPrice())
-                        {
-                            std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "You can't really do that :) Try again?" << std::endl;
-                            break;
-                        }
-                    }
-                if (!ok)
-                {
-                    std::cout << "Player not found. Choose again: ";
-                    std::cin >> football_player_name;
-                }
-            }
-            break;
-        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
 
-        default:
-        {
-            std::cout << "You can't really do that. Try again? :)" << std::endl;
-            break;
-        }
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : ManchesterCity.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (3):
+                {
+                    index = 1;
+                    for (const auto &player : Chelsea.get_team_players())
+                        if (player.getPosition() == "MID")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Chelsea.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (4):
+                {
+                    index = 1;
+                    for (const auto &player : ManchesterUnited.get_team_players())
+                        if (player.getPosition() == "MID")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : ManchesterUnited.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (5):
+                {
+                    index = 1;
+                    for (const auto &player : Liverpool.get_team_players())
+                        if (player.getPosition() == "MID")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Liverpool.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+
+                case (6):
+                {
+                    index = 1;
+                    for (const auto &player : Arsenal.get_team_players())
+                        if (player.getPosition() == "MID")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Arsenal.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (7):
+                {
+                    index = 1;
+                    for (const auto &player : Leicester.get_team_players())
+                        if (player.getPosition() == "MID")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Leicester.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (8):
+                {
+                    index = 1;
+                    for (const auto &player : WestHam.get_team_players())
+                        if (player.getPosition() == "MID")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : WestHam.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (9):
+                {
+                    index = 1;
+                    for (const auto &player : Brighton.get_team_players())
+                        if (player.getPosition() == "MID")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Brighton.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (10):
+                {
+                    index = 1;
+                    for (const auto &player : Wolves.get_team_players())
+                        if (player.getPosition() == "MID")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Wolves.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (11):
+                {
+                    index = 1;
+                    for (const auto &player : Newcastle.get_team_players())
+                        if (player.getPosition() == "MID")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Newcastle.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "DEF")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (12):
+                {
+                    index = 1;
+                    for (const auto &player : CrystalPalace.get_team_players())
+                        if (player.getPosition() == "MID")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : CrystalPalace.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (13):
+                {
+                    index = 1;
+                    for (const auto &player : Brentford.get_team_players())
+                        if (player.getPosition() == "MID")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Brentford.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (14):
+                {
+                    index = 1;
+                    for (const auto &player : AstonVilla.get_team_players())
+                        if (player.getPosition() == "MID")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : AstonVilla.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (15):
+                {
+                    index = 1;
+                    for (const auto &player : Southampton.get_team_players())
+                        if (player.getPosition() == "MID")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Southampton.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (16):
+                {
+                    index = 1;
+                    for (const auto &player : Everton.get_team_players())
+                        if (player.getPosition() == "MID")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Everton.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (17):
+                {
+                    index = 1;
+                    for (const auto &player : Leeds.get_team_players())
+                        if (player.getPosition() == "MID")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Leeds.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (18):
+                {
+                    index = 1;
+                    for (const auto &player : Burnley.get_team_players())
+                        if (player.getPosition() == "MID")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Burnley.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (19):
+                {
+                    index = 1;
+                    for (const auto &player : Watford.get_team_players())
+                        if (player.getPosition() == "MID")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Watford.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (20):
+                {
+                    index = 1;
+                    for (const auto &player : Norwich.get_team_players())
+                        if (player.getPosition() == "MID")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Norwich.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "MID")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+
+                default:
+                {
+                    std::cout << "You can't really do that. Try again? :)" << std::endl;
+                    break;
+                }
+                }
+            else
+                std::cout << key << " is not a number. Try again.\n";
         }
     }
     for (int i = 1; i <= atacanti; i++)
     {
-        std::cout << "Attacker number " << i << ". Select the team he's currently playing for: " << std::endl;
-        std::cout << "1. Tottenham" << std::endl;
-        std::cout << "2. Manchester City" << std::endl;
-        std::cout << "3. Chelsea" << std::endl;
-        std::cout << "4. Manchester United" << std::endl;
-        std::cout << "5. Liverpool" << std::endl;
-        std::cout << "6. Arsenal" << std::endl;
-        std::cout << "7. Leicester City" << std::endl;
-        std::cout << "8. West Ham United" << std::endl;
-        std::cout << "9. Brighton" << std::endl;
-        std::cout << "10. Wolves" << std::endl;
-        std::cout << "11. Newcastle" << std::endl;
-        std::cout << "12. Crystal Palace" << std::endl;
-        std::cout << "13. Brentford" << std::endl;
-        std::cout << "14. Aston Villa" << std::endl;
-        std::cout << "15. Southampton" << std::endl;
-        std::cout << "16. Everton" << std::endl;
-        std::cout << "17. Leeds" << std::endl;
-        std::cout << "18. Burnley" << std::endl;
-        std::cout << "19. Watford" << std::endl;
-        std::cout << "20. Norwich" << std::endl;
-        std::cin >> key;
+        ok2 = false;
+        while (!ok2)
+        {
+            std::cout << "Attacker number " << i << ". " << std::endl;
+            std::cout << "Select the team he's currently playing for: " << std::endl;
+            std::cout << "1. Tottenham" << std::endl;
+            std::cout << "2. Manchester City" << std::endl;
+            std::cout << "3. Chelsea" << std::endl;
+            std::cout << "4. Manchester United" << std::endl;
+            std::cout << "5. Liverpool" << std::endl;
+            std::cout << "6. Arsenal" << std::endl;
+            std::cout << "7. Leicester City" << std::endl;
+            std::cout << "8. West Ham United" << std::endl;
+            std::cout << "9. Brighton" << std::endl;
+            std::cout << "10. Wolves" << std::endl;
+            std::cout << "11. Newcastle" << std::endl;
+            std::cout << "12. Crystal Palace" << std::endl;
+            std::cout << "13. Brentford" << std::endl;
+            std::cout << "14. Aston Villa" << std::endl;
+            std::cout << "15. Southampton" << std::endl;
+            std::cout << "16. Everton" << std::endl;
+            std::cout << "17. Leeds" << std::endl;
+            std::cout << "18. Burnley" << std::endl;
+            std::cout << "19. Watford" << std::endl;
+            std::cout << "20. Norwich" << std::endl;
+            std::cin >> key;
+            if (isNumber(key) == true)
+                switch (stoi(key))
+                {
+                case (1):
+                {
+                    index = 1;
+                    for (const auto &player : Tottenham.get_team_players())
+                        if (player.getPosition() == "ATT")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Tottenham.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "ATT")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (2):
+                {
+                    index = 1;
+                    for (const auto &player : ManchesterCity.get_team_players())
+                        if (player.getPosition() == "ATT")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : ManchesterCity.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "ATT")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (3):
+                {
+                    index = 1;
+                    for (const auto &player : Chelsea.get_team_players())
+                        if (player.getPosition() == "ATT")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Chelsea.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "ATT")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (4):
+                {
+                    index = 1;
+                    for (const auto &player : ManchesterUnited.get_team_players())
+                        if (player.getPosition() == "ATT")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : ManchesterUnited.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "ATT")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (5):
+                {
+                    index = 1;
+                    for (const auto &player : Liverpool.get_team_players())
+                        if (player.getPosition() == "ATT")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Liverpool.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "ATT")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+
+                case (6):
+                {
+                    index = 1;
+                    for (const auto &player : Arsenal.get_team_players())
+                        if (player.getPosition() == "ATT")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Arsenal.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "ATT")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (7):
+                {
+                    index = 1;
+                    for (const auto &player : Leicester.get_team_players())
+                        if (player.getPosition() == "ATT")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Leicester.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "ATT")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (8):
+                {
+                    index = 1;
+                    for (const auto &player : WestHam.get_team_players())
+                        if (player.getPosition() == "ATT")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : WestHam.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "ATT")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (9):
+                {
+                    index = 1;
+                    for (const auto &player : Brighton.get_team_players())
+                        if (player.getPosition() == "ATT")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Brighton.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "ATT")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (10):
+                {
+                    index = 1;
+                    for (const auto &player : Wolves.get_team_players())
+                        if (player.getPosition() == "ATT")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Wolves.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "ATT")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (11):
+                {
+                    index = 1;
+                    for (const auto &player : Newcastle.get_team_players())
+                        if (player.getPosition() == "ATT")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Newcastle.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "ATT")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (12):
+                {
+                    index = 1;
+                    for (const auto &player : CrystalPalace.get_team_players())
+                        if (player.getPosition() == "ATT")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : CrystalPalace.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "ATT")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (13):
+                {
+                    index = 1;
+                    for (const auto &player : Brentford.get_team_players())
+                        if (player.getPosition() == "ATT")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Brentford.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "ATT")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (14):
+                {
+                    index = 1;
+                    for (const auto &player : AstonVilla.get_team_players())
+                        if (player.getPosition() == "ATT")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : AstonVilla.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "ATT")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (15):
+                {
+                    index = 1;
+                    for (const auto &player : Southampton.get_team_players())
+                        if (player.getPosition() == "ATT")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Southampton.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "ATT")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (16):
+                {
+                    index = 1;
+                    for (const auto &player : Everton.get_team_players())
+                        if (player.getPosition() == "ATT")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Everton.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "ATT")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (17):
+                {
+                    index = 1;
+                    for (const auto &player : Leeds.get_team_players())
+                        if (player.getPosition() == "ATT")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Leeds.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "ATT")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (18):
+                {
+                    index = 1;
+                    for (const auto &player : Burnley.get_team_players())
+                        if (player.getPosition() == "ATT")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Burnley.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "ATT")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (19):
+                {
+                    index = 1;
+                    for (const auto &player : Watford.get_team_players())
+                        if (player.getPosition() == "ATT")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Watford.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "ATT")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+                case (20):
+                {
+                    index = 1;
+                    for (const auto &player : Norwich.get_team_players())
+                        if (player.getPosition() == "ATT")
+                        {
+                            std::cout << index << ". " << player.getName() << " " << player.getSecond_Name() << ", OVR: " << player.getOverall() << ", price: " << player.getPrice() << std::endl;
+                            index++;
+                        }
+                    std::cout << "Type the name of the player you want to choose: " << std::endl;
+                    std::getline(std::cin, football_player_name);
+
+                    ok = false;
+                    while (!ok)
+                    {
+                        for (const auto &player : Norwich.get_team_players())
+                            if (football_player_name == player.getSecond_Name() && player.getPosition() == "ATT")
+                            {
+                                std::cout << "You've chosen " << player.getSecond_Name() << " " << player.getName() << ", " << player.getOverall() << std::endl;
+                                std::cout << "Price: " << player.getPrice() << std::endl;
+                                std::cout << "Are you sure? (y/n) ";
+                                std::cin >> yes_or_no;
+                                if (tolower(yes_or_no) == 'y' and Balance >= player.getPrice())
+                                {
+                                    ok = true;
+                                    ok2 = true;
+                                    Balance -= player.getPrice();
+                                    teamvalue += player.getPrice();
+                                    teamovr += player.getOverall();
+                                    std::cout << "Remaining balance: " << Balance << std::endl;
+                                    break;
+                                }
+                                else if (tolower(yes_or_no) == 'n')
+                                {
+                                    std::cout << "Let's choose again, then." << std::endl;
+                                    break;
+                                }
+                                else if (Balance < player.getPrice())
+                                {
+                                    std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                                    break;
+                                }
+                                else
+                                {
+                                    std::cout << "You can't really do that :) Try again?" << std::endl;
+                                    break;
+                                }
+                            }
+                        if (!ok)
+                        {
+                            std::cout << "Player not found. Choose again: ";
+                            std::getline(std::cin, football_player_name);
+                        }
+                    }
+                    break;
+                }
+
+                default:
+                {
+                    std::cout << "You can't really do that. Try again? :)" << std::endl;
+                    break;
+                }
+                }
+            else
+                std::cout << key << " is not a number. Try again.\n";
+        }
     }
+    std::cout << username << ", your team is valued at " << teamvalue << " and has an overall rating of " << teamovr / 11;
+    return 0;
 }
