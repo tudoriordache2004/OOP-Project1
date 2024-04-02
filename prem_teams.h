@@ -74,6 +74,8 @@ std::ostream &operator<<(std::ostream &os, const Football_Player &football_playe
 {
     if (football_player.getName() != "")
         os << football_player.getPosition() << ": " << football_player.getName() << " " << football_player.getSecond_Name() << ", " << football_player.getTeam_name() << ", " << football_player.getOverall();
+    else
+        os << football_player.getPosition() << ": " << football_player.getSecond_Name() << ", " << football_player.getTeam_name() << ", " << football_player.getOverall();
     os << "\n";
     return os;
 };
@@ -86,6 +88,7 @@ private:
     std::vector<Football_Player> defenders;
     std::vector<Football_Player> midfielders;
     std::vector<Football_Player> attackers;
+    int team_overall;
 
 public:
     std::string get_team_name(void)
@@ -108,6 +111,19 @@ public:
     {
         return attackers;
     };
+    void set_team_overall(int ovr)
+    {
+        for (const auto &goalkeeper : get_goalkeepers())
+            ovr += goalkeeper.getOverall();
+        for (const auto &defender : get_defenders())
+            ovr += defender.getOverall();
+        for (const auto &midfielder : get_midfielders())
+            ovr += midfielder.getOverall();
+        for (const auto &attacker : get_attackers())
+            ovr += attacker.getOverall();
+        team_overall = ovr / 17;
+    }
+    int get_team_overall(void) const;
 
     Team(std::string team_name)
     {
@@ -133,6 +149,7 @@ public:
         }
     }
 };
+int Team::get_team_overall(void) const { return team_overall; }
 
 bool isNumber(std::string s)
 {
@@ -384,7 +401,6 @@ void Choose_Goalkeeper(Team &team, std::vector<Football_Player> &players, int &b
 
 void Choose_Defender(Team &team, std::vector<Football_Player> &players, int &balance, int &teamvalue, int &teamoverall, bool &ok2)
 {
-    std::vector<Football_Player> defenders = team.get_defenders();
     std::string key;
     bool ok = false;
     while (!ok)
@@ -579,5 +595,60 @@ void Choose_Attacker(Team &team, std::vector<Football_Player> &players, int &bal
             std::cout << key << " is not a number. Try again." << std::endl;
         }
     }
+}
+void Exhibition(std::vector<Football_Player> your_team, int your_team_overall, std::vector<Team> premier_league_teams)
+{
+    std::string team_name;
+    int cnt = 1;
+    int your_team_wins = 0, your_team_losses = 0, your_team_draws = 0;
+    std::vector<std::string> wins = {
+        "1-0", "2-0", "2-1", "3-0", "3-1", "3-2",
+        "4-0", "4-1", "4-2", "4-3", "5-0", "5-1", "5-2", "5-3", "5-4"};
+
+    std::vector<std::string> draws = {
+        "0-0", "1-1", "2-2", "3-3", "4-4"};
+
+    std::vector<std::string> losses = {
+        "0-1", "0-2", "1-2", "0-3", "1-3", "2-3",
+        "0-4", "1-4", "2-4", "3-4", "0-5", "1-5", "2-5", "3-5", "4-5"};
+
+    std::cout << "First of all, we need to give your team a name: ";
+    std::cin.ignore();
+    std::getline(std::cin, team_name);
+    for (auto &premier_league_team : premier_league_teams)
+    {
+        premier_league_team.set_team_overall(premier_league_team.get_team_overall());
+        int probability;
+        std::cout << "Match number " << cnt << ": " << team_name << " - " << premier_league_team.get_team_name() << std::endl;
+        cnt++;
+        usleep(1000000);
+        probability = rand() % 99 + 1;
+        if (probability <= 33)
+        {
+            auto it = wins.begin();
+            int jmp = rand() % 15;
+            std::advance(it, jmp);
+            std::cout << "Full time: " << team_name << " " << *it << " " << premier_league_team.get_team_name() << std::endl;
+            your_team_wins++;
+        }
+        else if (probability <= 66)
+        {
+            auto it = draws.begin();
+            int jmp = rand() % 5;
+            std::advance(it, jmp);
+            std::cout << "Full time: " << team_name << " " << *it << " " << premier_league_team.get_team_name() << std::endl;
+            your_team_draws++;
+        }
+        else
+        {
+            auto it = losses.begin();
+            int jmp = rand() % 15;
+            std::advance(it, jmp);
+            std::cout << "Full time: " << team_name << " " << *it << " " << premier_league_team.get_team_name() << std::endl;
+            your_team_losses++;
+        }
+    }
+    std::cout << "Your team has " << your_team_wins << " wins, " << your_team_draws << " draws and " << your_team_losses << " losses. Thanks for playing!\n";
+    std::cout << "https://github.com/tudoriordache2004";
 }
 #endif

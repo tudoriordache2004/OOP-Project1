@@ -6,6 +6,8 @@
 #include "prem_teams.h"
 int main()
 {
+    std::vector<Team> teams;
+
     Team Tottenham("Tottenham");
 
     Football_Player Vicario("Vicario", "Guiglelmo", "Tottenham", "Italy", "GK", 84, 15000);
@@ -48,6 +50,8 @@ int main()
     Tottenham.addPlayer(Ndombele);
     Tottenham.addPlayer(Bergwijn);
     Tottenham.addPlayer(Scarlett);
+
+    teams.push_back(Tottenham);
 
     Team ManchesterCity("Manchester City");
 
@@ -92,6 +96,8 @@ int main()
     ManchesterCity.addPlayer(Sterling);
     ManchesterCity.addPlayer(Palmer);
 
+    teams.push_back(ManchesterCity);
+
     Team Chelsea("Chelsea");
 
     Football_Player Mendy2("Mendy", "Edouard", "Chelsea", "Senegal", "GK", 85, 32000);
@@ -134,6 +140,8 @@ int main()
     Chelsea.addPlayer(Barkley);
     Chelsea.addPlayer(Pulisic);
     Chelsea.addPlayer(Abraham);
+
+    teams.push_back(Chelsea);
 
     Team ManchesterUnited("Manchester United");
 
@@ -178,6 +186,8 @@ int main()
     ManchesterUnited.addPlayer(Lingard);
     ManchesterUnited.addPlayer(Greenwood);
 
+    teams.push_back(ManchesterUnited);
+
     Team Liverpool("Liverpool");
 
     Football_Player Alisson("Alisson", "", "Liverpool", "Brazil", "GK", 88, 55000);
@@ -220,6 +230,8 @@ int main()
     Liverpool.addPlayer(Elliott);
     Liverpool.addPlayer(OxladeChamberlain);
     Liverpool.addPlayer(Jota);
+
+    teams.push_back(Liverpool);
 
     Team Arsenal("Arsenal");
 
@@ -264,6 +276,8 @@ int main()
     Arsenal.addPlayer(Martinelli);
     Arsenal.addPlayer(Lacazette);
 
+    teams.push_back(Arsenal);
+
     Team Leicester("Leicester City");
 
     Football_Player Schmeichel("Schmeichel", "Kasper", "Leicester City", "Denmark", "GK", 85, 45000);
@@ -306,6 +320,8 @@ int main()
     Leicester.addPlayer(DewsburyHall);
     Leicester.addPlayer(Iheanacho);
     Leicester.addPlayer(Lookman);
+
+    teams.push_back(Leicester);
 
     Team WestHam("West Ham United");
 
@@ -350,6 +366,8 @@ int main()
     WestHam.addPlayer(Lanzini);
     WestHam.addPlayer(Yarmolenko);
 
+    teams.push_back(WestHam);
+
     Team Brighton("Brighton & Hove Albion");
 
     Football_Player Sanchez("Sanchez", "Robert", "Brighton & Hove Albion", "Spain", "GK", 81, 34000);
@@ -392,6 +410,8 @@ int main()
     Brighton.addPlayer(Zeqiri);
     Brighton.addPlayer(Connolly);
     Brighton.addPlayer(Moder);
+
+    teams.push_back(Brighton);
 
     Team Wolves("Wolverhampton Wanderers");
 
@@ -436,6 +456,8 @@ int main()
     Wolves.addPlayer(Silva3);
     Wolves.addPlayer(Trincao);
 
+    teams.push_back(Wolves);
+
     Team Newcastle("Newcastle United");
 
     Football_Player Dubravka("Dubravka", "Martin", "Newcastle United", "Slovakia", "GK", 81, 33000);
@@ -479,6 +501,8 @@ int main()
     Newcastle.addPlayer(Fraser);
     Newcastle.addPlayer(Gayle);
 
+    teams.push_back(Newcastle);
+
     Team CrystalPalace("Crystal Palace");
 
     Football_Player Guaita("Guaita", "Vicente", "Crystal Palace", "Spain", "GK", 79, 32000);
@@ -521,6 +545,8 @@ int main()
     CrystalPalace.addPlayer(McArthur);
     CrystalPalace.addPlayer(Schlupp);
     CrystalPalace.addPlayer(Benteke);
+
+    teams.push_back(CrystalPalace);
 
     Team Brentford("Brentford");
 
@@ -569,6 +595,8 @@ int main()
     Brentford.addPlayer(Fosu);
     Brentford.addPlayer(Forss);
 
+    teams.push_back(Brentford);
+
     Team AstonVilla("Aston Villa");
 
     Football_Player Martinez("Martinez", "Emiliano", "Aston Villa", "Argentina", "GK", 81, 33000);
@@ -616,6 +644,8 @@ int main()
     AstonVilla.addPlayer(Davis);
     AstonVilla.addPlayer(Archer);
 
+    teams.push_back(AstonVilla);
+
     Team Southampton("Southampton");
 
     Football_Player McCarthy("McCarthy", "Alex", "Southampton", "Ireland", "GK", 76, 25000);
@@ -658,6 +688,8 @@ int main()
     Southampton.addPlayer(Djenepo);
     Southampton.addPlayer(Long);
     Southampton.addPlayer(Elyounoussi);
+
+    teams.push_back(Southampton);
 
     Team Everton("Everton");
 
@@ -702,6 +734,8 @@ int main()
     Everton.addPlayer(Townsend);
     Everton.addPlayer(Rondon);
 
+    teams.push_back(Everton);
+
     Team Leeds("Leeds United");
 
     Football_Player Meslier("Meslier", "Illan", "Leeds United", "France", "GK", 78, 26000);
@@ -744,6 +778,8 @@ int main()
     Leeds.addPlayer(Shackleton);
     Leeds.addPlayer(Forshaw);
     Leeds.addPlayer(Roberts);
+
+    teams.push_back(Leeds);
 
     Team Burnley("Burnley");
 
@@ -788,6 +824,8 @@ int main()
     Burnley.addPlayer(Stephens2);
     Burnley.addPlayer(Richardson);
 
+    teams.push_back(Burnley);
+
     Team Watford("Watford");
 
     Football_Player Bachmann("Bachmann", "Daniel", "Watford", "Austria", "GK", 75, 22000);
@@ -830,6 +868,8 @@ int main()
     Watford.addPlayer(Gosling);
     Watford.addPlayer(Hernández);
     Watford.addPlayer(Fletcher);
+
+    teams.push_back(Watford);
 
     Team Norwich("Norwich");
 
@@ -874,6 +914,7 @@ int main()
     Norwich.addPlayer(Dowell);
     Norwich.addPlayer(Sargent);
 
+    teams.push_back(Norwich);
     // am initializat echipele, cu jucatorii lor.
 
     std::vector<FUT_Player> players;
@@ -1406,4 +1447,34 @@ int main()
     std::cout << fut_player_username << ", your team is valued at " << teamvalue << " coins and has an overall rating of " << teamoverall << ":" << std::endl;
     for (const auto &player : fut_player_team)
         std::cout << player;
+    std::cout << "Let's see how your team competes against other Premier League teams, shall we? \n1.Yes\n2.No\n";
+    ok = false;
+    while (!ok)
+    {
+        std::cin >> key;
+        if (isNumber(key))
+            switch (stoll(key))
+            {
+            case (1):
+            {
+                Exhibition(fut_player_team, teamoverall, teams);
+                ok = true;
+                break;
+            }
+            case (2):
+            {
+                std::cout << "Hope you enjoyed creating your own Premier League team!";
+                return 0;
+            }
+            default:
+            {
+                std::cout << "You have to choose a number between 1 and 2.";
+            }
+            }
+        else
+        {
+            std::cout << key << "is not a number. Try again.";
+        }
+    }
+    return 0;
 }
