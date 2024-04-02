@@ -94,17 +94,17 @@ int main()
 
     Team Chelsea("Chelsea");
 
-    Football_Player Mendy2("Mendy", "Edouard", "football_players", "Senegal", "GK", 85, 32000);
-    Football_Player James("James", "Reece", "football_players", "England", "DEF", 84, 28000);
-    Football_Player Silva2("Silva", "Thiago", "football_players", "Brazil", "DEF", 86, 37000);
-    Football_Player Rudiger("Rudiger", "Antonio", "football_players", "Germany", "DEF", 84, 32000);
-    Football_Player Chilwell("Chilwell", "Ben", "football_players", "England", "DEF", 83, 31000);
-    Football_Player Kante("Kante", "N'Golo", "football_players", "France", "MID", 88, 48000);
-    Football_Player Jorginho("Jorginho", "", "football_players", "Italy", "MID", 84, 32000);
-    Football_Player Mount("Mount", "Mason", "football_players", "England", "MID", 85, 38000);
-    Football_Player Havertz("Havertz", "Kai", "football_players", "Germany", "MID", 85, 41000);
-    Football_Player Werner("Werner", "Timo", "football_players", "Germany", "ATT", 83, 34000);
-    Football_Player Lukaku("Lukaku", "Romelu", "football_players", "Belgium", "ATT", 88, 55000);
+    Football_Player Mendy2("Mendy", "Edouard", "Chelsea", "Senegal", "GK", 85, 32000);
+    Football_Player James("James", "Reece", "Chelsea", "England", "DEF", 84, 28000);
+    Football_Player Silva2("Silva", "Thiago", "Chelsea", "Brazil", "DEF", 86, 37000);
+    Football_Player Rudiger("Rudiger", "Antonio", "Chelsea", "Germany", "DEF", 84, 32000);
+    Football_Player Chilwell("Chilwell", "Ben", "Chelsea", "England", "DEF", 83, 31000);
+    Football_Player Kante("Kante", "N'Golo", "Chelsea", "France", "MID", 88, 48000);
+    Football_Player Jorginho("Jorginho", "", "Chelsea", "Italy", "MID", 84, 32000);
+    Football_Player Mount("Mount", "Mason", "Chelsea", "England", "MID", 85, 38000);
+    Football_Player Havertz("Havertz", "Kai", "Chelsea", "Germany", "MID", 85, 41000);
+    Football_Player Werner("Werner", "Timo", "Chelsea", "Germany", "ATT", 83, 34000);
+    Football_Player Lukaku("Lukaku", "Romelu", "Chelsea", "Belgium", "ATT", 88, 55000);
 
     Chelsea.addPlayer(Mendy2);
     Chelsea.addPlayer(James);
@@ -906,7 +906,7 @@ int main()
         std::cout << "Let's start with the goalkeeper. Select the team he's currently playing for: " << std::endl;
         PremierLeagueTeams();
         std::cin >> key;
-        if (isNumber(key) == true)
+        if (isNumber(key))
         {
             std::cin.ignore();
             switch (stoi(key))
@@ -1031,7 +1031,7 @@ int main()
             std::cout << "Defender number " << i << ". Select the team he's currently playing for: " << std::endl;
             PremierLeagueTeams();
             std::cin >> key;
-            if (isNumber(key) == true)
+            if (isNumber(key))
             {
                 std::cin.ignore();
                 switch (stoll(key))
@@ -1158,7 +1158,7 @@ int main()
             std::cout << "Midfielder number " << i << ". Select the team he's currently playing for: " << std::endl;
             PremierLeagueTeams();
             std::cin >> key;
-            if (isNumber(key) == true)
+            if (isNumber(key))
             {
                 std::cin.ignore();
                 switch (stoll(key))
@@ -1284,7 +1284,7 @@ int main()
             std::cout << "Attacker number " << i << ". Select the team he's currently playing for: " << std::endl;
             PremierLeagueTeams();
             std::cin >> key;
-            if (isNumber(key) == true)
+            if (isNumber(key))
             {
                 std::cin.ignore();
                 switch (stoll(key))
@@ -1403,6 +1403,7 @@ int main()
         }
     }
     teamoverall /= 11;
-    std::cout << fut_player_username << ", your team is valued at " << teamvalue << " coins and has an overall rating of " << teamoverall << "." << std::endl;
-    return 0;
+    std::cout << fut_player_username << ", your team is valued at " << teamvalue << " coins and has an overall rating of " << teamoverall << ":" << std::endl;
+    for (const auto &player : fut_player_team)
+        std::cout << player;
 }

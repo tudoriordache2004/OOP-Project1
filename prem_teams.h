@@ -21,25 +21,6 @@ public:
         this->Balance = Balance;
     }
 
-    // constr de copiere
-    FUT_Player(const FUT_Player &other)
-    {
-        this->Player_Username = other.Player_Username;
-        this->Player_Password = other.Player_Password;
-        this->Balance = other.Balance;
-    }
-
-    // operator egal
-    FUT_Player &operator=(const FUT_Player &other)
-    {
-        if (this == &other)
-            return *this;
-        this->Player_Username = Player_Username;
-        this->Player_Password = Player_Password;
-        this->Balance = Balance;
-        return *this;
-    }
-
     std::string getUsername(void) const;
     std::string getPassword(void) const;
     int getBalance(void);
@@ -78,6 +59,7 @@ public:
     std::string getPosition(void) const;
     int getOverall(void) const;
     int getPrice(void) const;
+    friend std::ostream &operator<<(std::ostream &os, const Football_Player &football_player);
 };
 
 std::string Football_Player::getName(void) const { return Player_Name; }
@@ -87,6 +69,14 @@ std::string Football_Player::getNationality(void) const { return Nationality; }
 std::string Football_Player::getPosition(void) const { return Position; }
 int Football_Player::getOverall(void) const { return Overall; }
 int Football_Player::getPrice(void) const { return Price; }
+
+std::ostream &operator<<(std::ostream &os, const Football_Player &football_player)
+{
+    if (football_player.getName() != "")
+        os << football_player.getPosition() << ": " << football_player.getName() << " " << football_player.getSecond_Name() << ", " << football_player.getTeam_name() << ", " << football_player.getOverall();
+    os << "\n";
+    return os;
+};
 
 class Team
 {
@@ -122,10 +112,6 @@ public:
     Team(std::string team_name)
     {
         this->team_name = team_name;
-        // this->goalkeepers = goalkeepers;
-        // this->defenders = defenders;
-        // this->midfielders = midfielders;
-        // this->attackers = attackers;
     }
     void addPlayer(Football_Player &player)
     {
@@ -365,7 +351,6 @@ void Choose_Goalkeeper(Team &team, std::vector<Football_Player> &players, int &b
                         teamvalue += team.get_goalkeepers()[keynumber - 1].getPrice();
                         teamoverall += team.get_goalkeepers()[keynumber - 1].getOverall();
                         players.push_back(team.get_goalkeepers()[keynumber - 1]);
-                        // team.get_goalkeepers().erase(team.get_goalkeepers().begin() + keynumber - 1);
                         std::cout << "Remaining balance: " << balance << std::endl;
                         break;
                     }
