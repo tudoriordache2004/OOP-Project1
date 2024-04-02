@@ -10,17 +10,17 @@ int main()
 
     Team Tottenham("Tottenham");
 
-    Football_Player Vicario("Vicario", "Guiglelmo", "Tottenham", "Italy", "GK", 84, 15000);
-    Football_Player Udogie("Udogie", "Destiny", "Tottenham", "Italy", "DEF", 81, 12000);
-    Football_Player VandeVen("Van de Ven", "Micky", "Tottenham", "Netherlands", "DEF", 79, 7500);
-    Football_Player Romero("Romero", "Cristian", "Tottenham", "Argentina", "DEF", 84, 15500);
-    Football_Player Porro("Porro", "Pedro", "Tottenham", "Spain", "DEF", 84, 22500);
-    Football_Player Bentancur("Bentancur", "Rodrigo", "Tottenham", "Uruguay", "MID", 80, 7500);
-    Football_Player Sarr("Sarr", "Pape-Matar", "Tottenham", "Senegal", "MID", 75, 1500);
-    Football_Player Maddison("Maddison", "James", "Tottenham", "England", "MID", 86, 45000);
-    Football_Player Son("Son", "Heung-Min", "Tottenham", "South Korea", "ATT", 88, 83250);
-    Football_Player Richarlison("Richarlison", "", "Tottenham", "Brazil", "ATT", 80, 7250);
-    Football_Player Kulusevski("Kulusevski", "Dejan", "Tottenham", "Sweden", "ATT", 83, 9450);
+    Football_Player Vicario("Vicario", "Guiglelmo", "Tottenham", "Italy", "GK", 84, 25000);
+    Football_Player Udogie("Udogie", "Destiny", "Tottenham", "Italy", "DEF", 81, 22000);
+    Football_Player VandeVen("Van de Ven", "Micky", "Tottenham", "Netherlands", "DEF", 79, 17500);
+    Football_Player Romero("Romero", "Cristian", "Tottenham", "Argentina", "DEF", 84, 25500);
+    Football_Player Porro("Porro", "Pedro", "Tottenham", "Spain", "DEF", 84, 32500);
+    Football_Player Bentancur("Bentancur", "Rodrigo", "Tottenham", "Uruguay", "MID", 80, 17500);
+    Football_Player Sarr("Sarr", "Pape-Matar", "Tottenham", "Senegal", "MID", 75, 11500);
+    Football_Player Maddison("Maddison", "James", "Tottenham", "England", "MID", 86, 55000);
+    Football_Player Son("Son", "Heung-Min", "Tottenham", "South Korea", "ATT", 88, 93250);
+    Football_Player Richarlison("Richarlison", "", "Tottenham", "Brazil", "ATT", 80, 17250);
+    Football_Player Kulusevski("Kulusevski", "Dejan", "Tottenham", "Sweden", "ATT", 83, 19450);
 
     Tottenham.addPlayer(Vicario);
     Tottenham.addPlayer(Udogie);
@@ -945,8 +945,10 @@ int main()
     while (!ok)
     {
         std::cout << "Let's start with the goalkeeper. Select the team he's currently playing for: " << std::endl;
+        usleep(2000000);
         PremierLeagueTeams();
         std::cin >> key;
+        usleep(1000000);
         if (isNumber(key))
         {
             std::cin.ignore();
@@ -1070,8 +1072,10 @@ int main()
         while (!ok)
         {
             std::cout << "Defender number " << i << ". Select the team he's currently playing for: " << std::endl;
+            usleep(2000000);
             PremierLeagueTeams();
             std::cin >> key;
+            usleep(1000000);
             if (isNumber(key))
             {
                 std::cin.ignore();
@@ -1197,6 +1201,7 @@ int main()
         while (!ok)
         {
             std::cout << "Midfielder number " << i << ". Select the team he's currently playing for: " << std::endl;
+            usleep(2000000);
             PremierLeagueTeams();
             std::cin >> key;
             if (isNumber(key))
@@ -1323,8 +1328,10 @@ int main()
         while (!ok)
         {
             std::cout << "Attacker number " << i << ". Select the team he's currently playing for: " << std::endl;
+            usleep(2000000);
             PremierLeagueTeams();
             std::cin >> key;
+            usleep(1000000);
             if (isNumber(key))
             {
                 std::cin.ignore();
@@ -1444,9 +1451,14 @@ int main()
         }
     }
     teamoverall /= 11;
+    std::cout << "-----------------------------------------------------------------\n";
     std::cout << fut_player_username << ", your team is valued at " << teamvalue << " coins and has an overall rating of " << teamoverall << ":" << std::endl;
+    usleep(2000000);
+    std::cout << "-----------------------------------------------------------------\n";
     for (const auto &player : fut_player_team)
         std::cout << player;
+    std::cout << "-----------------------------------------------------------------\n";
+    usleep(1000000);
     std::cout << "Let's see how your team competes against other Premier League teams, shall we? \n1.Yes\n2.No\n";
     ok = false;
     while (!ok)

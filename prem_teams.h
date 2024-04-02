@@ -3,6 +3,7 @@
 #include <cstring>
 #include <conio.h>
 #include <unistd.h>
+#include <algorithm>
 #ifndef prem_teams.h
 #define prem_teams .h
 
@@ -60,6 +61,14 @@ public:
     int getOverall(void) const;
     int getPrice(void) const;
     friend std::ostream &operator<<(std::ostream &os, const Football_Player &football_player);
+
+    bool operator==(const Football_Player &player)
+    {
+        if (player.Player_Name == Player_Name && player.Player_Second_Name == Player_Second_Name && player.team_name == team_name && player.Overall == Overall && player.Nationality == Nationality && player.Position == Position && player.Overall == Overall && player.Price == Price)
+            return true;
+        else
+            return false;
+    }
 };
 
 std::string Football_Player::getName(void) const { return Player_Name; }
@@ -88,7 +97,6 @@ private:
     std::vector<Football_Player> defenders;
     std::vector<Football_Player> midfielders;
     std::vector<Football_Player> attackers;
-    int team_overall;
 
 public:
     std::string get_team_name(void)
@@ -111,20 +119,6 @@ public:
     {
         return attackers;
     };
-    void set_team_overall(int ovr)
-    {
-        for (const auto &goalkeeper : get_goalkeepers())
-            ovr += goalkeeper.getOverall();
-        for (const auto &defender : get_defenders())
-            ovr += defender.getOverall();
-        for (const auto &midfielder : get_midfielders())
-            ovr += midfielder.getOverall();
-        for (const auto &attacker : get_attackers())
-            ovr += attacker.getOverall();
-        team_overall = ovr / 17;
-    }
-    int get_team_overall(void) const;
-
     Team(std::string team_name)
     {
         this->team_name = team_name;
@@ -149,7 +143,6 @@ public:
         }
     }
 };
-int Team::get_team_overall(void) const { return team_overall; }
 
 bool isNumber(std::string s)
 {
@@ -207,6 +200,7 @@ void log_in(std::vector<FUT_Player> players, int &balance, std::string &playerus
                             password += ch;
                         }
                     }
+                    usleep(1000000);
                     std::cout << std::endl;
                     if (player.getPassword() == password)
                     {
@@ -307,10 +301,12 @@ void Choose_Formation(int &fundasi, int &mijlocasi, int &atacanti)
     std::cout << "Your chosen formation is " << fundasi << "-" << mijlocasi << "-" << atacanti << ". " << std::endl;
     usleep(2000000);
     std::cout << "Let's choose your players now!" << std::endl;
+    usleep(2000000);
 }
 
 void PremierLeagueTeams()
 {
+    std::cout << "-----------------------------------------------------------------\n";
     std::cout << "1. Tottenham" << std::endl;
     std::cout << "2. Manchester City" << std::endl;
     std::cout << "3. Chelsea" << std::endl;
@@ -331,7 +327,16 @@ void PremierLeagueTeams()
     std::cout << "18. Burnley" << std::endl;
     std::cout << "19. Norwich" << std::endl;
     std::cout << "20. Watford" << std::endl;
+    std::cout << "-----------------------------------------------------------------\n";
 }
+
+int PlayerInTeam(std::vector<Football_Player> team, Football_Player football_player)
+{
+    int cnt = count(team.begin(), team.end(), football_player);
+    if (cnt == 0)
+        return false;
+    return true;
+};
 
 void Choose_Goalkeeper(Team &team, std::vector<Football_Player> &players, int &balance, int &teamvalue, int &teamoverall, bool &ok2)
 {
@@ -340,12 +345,16 @@ void Choose_Goalkeeper(Team &team, std::vector<Football_Player> &players, int &b
     while (!ok)
     {
         std::cout << "Select which goalkeeper you want to add to your team: " << std::endl;
+        usleep(1000000);
+        std::cout << "-----------------------------------------------------------------\n";
         for (int i = 0; i < team.get_goalkeepers().size(); i++)
             if (team.get_goalkeepers()[i].getName() != "")
                 std::cout << i + 1 << ". " << team.get_goalkeepers()[i].getName() << " " << team.get_goalkeepers()[i].getSecond_Name() << ", OVR: " << team.get_goalkeepers()[i].getOverall() << ", price: " << team.get_goalkeepers()[i].getPrice() << std::endl;
             else
                 std::cout << i + 1 << ". " << team.get_goalkeepers()[i].getSecond_Name() << ", OVR: " << team.get_goalkeepers()[i].getOverall() << ", price: " << team.get_goalkeepers()[i].getPrice() << std::endl;
+        std::cout << "-----------------------------------------------------------------\n";
         std::cin >> key;
+        usleep(1000000);
         if (isNumber(key) == true)
         {
             int keynumber = stoll(key);
@@ -359,6 +368,7 @@ void Choose_Goalkeeper(Team &team, std::vector<Football_Player> &players, int &b
                 std::cout << "Price: " << team.get_goalkeepers()[keynumber - 1].getPrice() << std::endl;
                 std::cout << "Are you sure? (y/n) ";
                 std::cin >> yes_or_no;
+                usleep(1000000);
                 if (tolower(yes_or_no) == 'y')
                     if (balance >= team.get_goalkeepers()[keynumber - 1].getPrice())
                     {
@@ -369,15 +379,20 @@ void Choose_Goalkeeper(Team &team, std::vector<Football_Player> &players, int &b
                         teamoverall += team.get_goalkeepers()[keynumber - 1].getOverall();
                         players.push_back(team.get_goalkeepers()[keynumber - 1]);
                         std::cout << "Remaining balance: " << balance << std::endl;
+                        usleep(2000000);
                         break;
                     }
                     else
-                        std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
+                    {
+                        std::cout << "You don't have enough FUT Coins to buy this player.\nDon't worry though. We've got you covered. +500000 coins for playing our game. :)";
+                        balance += 500000;
+                    }
                 else if (tolower(yes_or_no) == 'n')
                 {
                     std::cout << "If you want to choose another team, let us know. (y/n)" << std::endl;
                     char yes_or_no2;
                     std::cin >> yes_or_no2;
+                    usleep(1000000);
                     if (yes_or_no2 == 'y')
                     {
                         ok = true;
@@ -406,55 +421,68 @@ void Choose_Defender(Team &team, std::vector<Football_Player> &players, int &bal
     while (!ok)
     {
         std::cout << "Select which defender you want to add to your team: " << std::endl;
+        usleep(1000000);
+        std::cout << "-----------------------------------------------------------------\n";
         for (size_t i = 0; i < team.get_defenders().size(); i++)
             if (team.get_defenders()[i].getName() != "")
                 std::cout << i + 1 << ". " << team.get_defenders()[i].getName() << " " << team.get_defenders()[i].getSecond_Name() << ", OVR: " << team.get_defenders()[i].getOverall() << ", price: " << team.get_defenders()[i].getPrice() << std::endl;
             else
                 std::cout << i + 1 << ". " << team.get_defenders()[i].getSecond_Name() << ", OVR: " << team.get_defenders()[i].getOverall() << ", price: " << team.get_defenders()[i].getPrice() << std::endl;
+        std::cout << "-----------------------------------------------------------------\n";
         std::cin >> key;
+        usleep(1000000);
         if (isNumber(key) == true)
         {
             size_t keynumber = stoll(key);
             if (keynumber >= 1 && keynumber <= team.get_defenders().size())
-            {
-                char yes_or_no;
-                if (team.get_defenders()[keynumber - 1].getName() != "")
-                    std::cout << "You've chosen " << team.get_defenders()[keynumber - 1].getName() << " " << team.get_defenders()[keynumber - 1].getSecond_Name() << ", " << team.get_defenders()[keynumber - 1].getOverall() << std::endl;
-                else
-                    std::cout << "You've chosen " << team.get_defenders()[keynumber - 1].getSecond_Name() << ", " << team.get_defenders()[keynumber - 1].getOverall() << std::endl;
-                std::cout << "Price: " << team.get_defenders()[keynumber - 1].getPrice() << std::endl;
-                std::cout << "Are you sure? (y/n) ";
-                std::cin >> yes_or_no;
-                if (tolower(yes_or_no) == 'y')
-                    if (balance >= team.get_defenders()[keynumber - 1].getPrice())
-                    {
-                        ok = true;
-                        ok2 = true;
-                        balance -= team.get_defenders()[keynumber - 1].getPrice();
-                        teamvalue += team.get_defenders()[keynumber - 1].getPrice();
-                        teamoverall += team.get_defenders()[keynumber - 1].getOverall();
-                        players.push_back(team.get_defenders()[keynumber - 1]);
-                        std::cout << "Remaining balance: " << balance << std::endl;
-                        break;
-                    }
-                    else
-                        std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                else if (tolower(yes_or_no) == 'n')
+                if (!PlayerInTeam(players, team.get_defenders()[keynumber - 1]))
                 {
-                    std::cout << "If you want to choose another team, let us know. (y/n)" << std::endl;
-                    char yes_or_no2;
-                    std::cin >> yes_or_no2;
-                    if (yes_or_no2 == 'y')
+                    char yes_or_no;
+                    if (team.get_defenders()[keynumber - 1].getName() != "")
+                        std::cout << "You've chosen " << team.get_defenders()[keynumber - 1].getName() << " " << team.get_defenders()[keynumber - 1].getSecond_Name() << ", " << team.get_defenders()[keynumber - 1].getOverall() << std::endl;
+                    else
+                        std::cout << "You've chosen " << team.get_defenders()[keynumber - 1].getSecond_Name() << ", " << team.get_defenders()[keynumber - 1].getOverall() << std::endl;
+                    std::cout << "Price: " << team.get_defenders()[keynumber - 1].getPrice() << std::endl;
+                    std::cout << "Are you sure? (y/n) ";
+                    std::cin >> yes_or_no;
+                    usleep(1000000);
+                    if (tolower(yes_or_no) == 'y')
+                        if (balance >= team.get_defenders()[keynumber - 1].getPrice())
+                        {
+                            ok = true;
+                            ok2 = true;
+                            balance -= team.get_defenders()[keynumber - 1].getPrice();
+                            teamvalue += team.get_defenders()[keynumber - 1].getPrice();
+                            teamoverall += team.get_defenders()[keynumber - 1].getOverall();
+                            players.push_back(team.get_defenders()[keynumber - 1]);
+                            std::cout << "Remaining balance: " << balance << std::endl;
+                            usleep(2000000);
+                            break;
+                        }
+                        else
+                        {
+                            std::cout << "You don't have enough FUT Coins to buy this player.\nDon't worry though. We've got you covered. +500000 coins for playing our game. :)";
+                            balance += 500000;
+                        }
+                    else if (tolower(yes_or_no) == 'n')
                     {
-                        ok = true;
-                        ok2 = false;
-                    }
-                    else if (yes_or_no2 == 'n')
-                    {
-                        std::cout << "Let's choose again, then." << std::endl;
+                        std::cout << "If you want to choose another team, let us know. (y/n)" << std::endl;
+                        char yes_or_no2;
+                        std::cin >> yes_or_no2;
+                        usleep(1000000);
+                        if (yes_or_no2 == 'y')
+                        {
+                            ok = true;
+                            ok2 = false;
+                        }
+                        else if (yes_or_no2 == 'n')
+                        {
+                            std::cout << "Let's choose again, then." << std::endl;
+                        }
                     }
                 }
-            }
+                else
+                    std::cout << "This player is already in your team. Choose another one." << std::endl;
             else
                 std::cout << "You have to choose a number between " << 1 << " and " << team.get_defenders().size() << ". Try again." << std::endl;
         }
@@ -472,55 +500,68 @@ void Choose_Midfielder(Team &team, std::vector<Football_Player> &players, int &b
     while (!ok)
     {
         std::cout << "Select which midfielder you want to add to your team: " << std::endl;
+        usleep(1000000);
+        std::cout << "-----------------------------------------------------------------\n";
         for (int i = 0; i < team.get_midfielders().size(); i++)
             if (team.get_midfielders()[i].getName() != "")
                 std::cout << i + 1 << ". " << team.get_midfielders()[i].getName() << " " << team.get_midfielders()[i].getSecond_Name() << ", OVR: " << team.get_midfielders()[i].getOverall() << ", price: " << team.get_midfielders()[i].getPrice() << std::endl;
             else
                 std::cout << i + 1 << ". " << team.get_midfielders()[i].getSecond_Name() << ", OVR: " << team.get_midfielders()[i].getOverall() << ", price: " << team.get_midfielders()[i].getPrice() << std::endl;
+        std::cout << "-----------------------------------------------------------------\n";
         std::cin >> key;
+        usleep(1000000);
         if (isNumber(key) == true)
         {
             int keynumber = stoll(key);
             if (keynumber >= 1 && keynumber <= team.get_midfielders().size())
-            {
-                char yes_or_no;
-                if (team.get_midfielders()[keynumber - 1].getName() != "")
-                    std::cout << "You've chosen " << team.get_midfielders()[keynumber - 1].getName() << " " << team.get_midfielders()[keynumber - 1].getSecond_Name() << ", " << team.get_midfielders()[keynumber - 1].getOverall() << std::endl;
-                else
-                    std::cout << "You've chosen " << team.get_midfielders()[keynumber - 1].getSecond_Name() << ", " << team.get_midfielders()[keynumber - 1].getOverall() << std::endl;
-                std::cout << "Price: " << team.get_midfielders()[keynumber - 1].getPrice() << std::endl;
-                std::cout << "Are you sure? (y/n) ";
-                std::cin >> yes_or_no;
-                if (tolower(yes_or_no) == 'y')
-                    if (balance >= team.get_midfielders()[keynumber - 1].getPrice())
-                    {
-                        ok = true;
-                        ok2 = true;
-                        balance -= team.get_midfielders()[keynumber - 1].getPrice();
-                        teamvalue += team.get_midfielders()[keynumber - 1].getPrice();
-                        teamoverall += team.get_midfielders()[keynumber - 1].getOverall();
-                        players.push_back(team.get_midfielders()[keynumber - 1]);
-                        std::cout << "Remaining balance: " << balance << std::endl;
-                        break;
-                    }
-                    else
-                        std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                else if (tolower(yes_or_no) == 'n')
+                if (!PlayerInTeam(players, team.get_midfielders()[keynumber - 1]))
                 {
-                    std::cout << "If you want to choose another team, let us know. (y/n)" << std::endl;
-                    char yes_or_no2;
-                    std::cin >> yes_or_no2;
-                    if (yes_or_no2 == 'y')
+                    char yes_or_no;
+                    if (team.get_midfielders()[keynumber - 1].getName() != "")
+                        std::cout << "You've chosen " << team.get_midfielders()[keynumber - 1].getName() << " " << team.get_midfielders()[keynumber - 1].getSecond_Name() << ", " << team.get_midfielders()[keynumber - 1].getOverall() << std::endl;
+                    else
+                        std::cout << "You've chosen " << team.get_midfielders()[keynumber - 1].getSecond_Name() << ", " << team.get_midfielders()[keynumber - 1].getOverall() << std::endl;
+                    std::cout << "Price: " << team.get_midfielders()[keynumber - 1].getPrice() << std::endl;
+                    std::cout << "Are you sure? (y/n) ";
+                    std::cin >> yes_or_no;
+                    usleep(1000000);
+                    if (tolower(yes_or_no) == 'y')
+                        if (balance >= team.get_midfielders()[keynumber - 1].getPrice())
+                        {
+                            ok = true;
+                            ok2 = true;
+                            balance -= team.get_midfielders()[keynumber - 1].getPrice();
+                            teamvalue += team.get_midfielders()[keynumber - 1].getPrice();
+                            teamoverall += team.get_midfielders()[keynumber - 1].getOverall();
+                            players.push_back(team.get_midfielders()[keynumber - 1]);
+                            std::cout << "Remaining balance: " << balance << std::endl;
+                            usleep(2000000);
+                            break;
+                        }
+                        else
+                        {
+                            std::cout << "You don't have enough FUT Coins to buy this player.\nDon't worry though. We've got you covered. +500000 coins for playing our game. :)";
+                            balance += 500000;
+                        }
+                    else if (tolower(yes_or_no) == 'n')
                     {
-                        ok = true;
-                        ok2 = false;
-                    }
-                    else if (yes_or_no2 == 'n')
-                    {
-                        std::cout << "Let's choose again, then." << std::endl;
+                        std::cout << "If you want to choose another team, let us know. (y/n)" << std::endl;
+                        char yes_or_no2;
+                        std::cin >> yes_or_no2;
+                        usleep(1000000);
+                        if (yes_or_no2 == 'y')
+                        {
+                            ok = true;
+                            ok2 = false;
+                        }
+                        else if (yes_or_no2 == 'n')
+                        {
+                            std::cout << "Let's choose again, then." << std::endl;
+                        }
                     }
                 }
-            }
+                else
+                    std::cout << "This player is already in your team. Choose another one." << std::endl;
             else
                 std::cout << "You have to choose a number between " << 1 << " and " << team.get_midfielders().size() << ". Try again." << std::endl;
         }
@@ -538,55 +579,69 @@ void Choose_Attacker(Team &team, std::vector<Football_Player> &players, int &bal
     while (!ok)
     {
         std::cout << "Select which attacker you want to add to your team: " << std::endl;
+        usleep(1000000);
+        std::cout << "-----------------------------------------------------------------\n";
         for (int i = 0; i < team.get_attackers().size(); i++)
             if (team.get_attackers()[i].getName() != "")
                 std::cout << i + 1 << ". " << team.get_attackers()[i].getName() << " " << team.get_attackers()[i].getSecond_Name() << ", OVR: " << team.get_attackers()[i].getOverall() << ", price: " << team.get_attackers()[i].getPrice() << std::endl;
             else
                 std::cout << i + 1 << ". " << team.get_attackers()[i].getSecond_Name() << ", OVR: " << team.get_attackers()[i].getOverall() << ", price: " << team.get_attackers()[i].getPrice() << std::endl;
+        std::cout << "-----------------------------------------------------------------\n";
         std::cin >> key;
+        usleep(1000000);
         if (isNumber(key) == true)
         {
             int keynumber = stoll(key);
             if (keynumber >= 1 && keynumber <= team.get_attackers().size())
-            {
-                char yes_or_no;
-                if (team.get_attackers()[keynumber - 1].getName() != "")
-                    std::cout << "You've chosen " << team.get_attackers()[keynumber - 1].getName() << " " << team.get_attackers()[keynumber - 1].getSecond_Name() << ", " << team.get_attackers()[keynumber - 1].getOverall() << std::endl;
-                else
-                    std::cout << "You've chosen " << team.get_attackers()[keynumber - 1].getSecond_Name() << ", " << team.get_attackers()[keynumber - 1].getOverall() << std::endl;
-                std::cout << "Price: " << team.get_attackers()[keynumber - 1].getPrice() << std::endl;
-                std::cout << "Are you sure? (y/n) ";
-                std::cin >> yes_or_no;
-                if (tolower(yes_or_no) == 'y')
-                    if (balance >= team.get_attackers()[keynumber - 1].getPrice())
-                    {
-                        ok = true;
-                        ok2 = true;
-                        balance -= team.get_attackers()[keynumber - 1].getPrice();
-                        teamvalue += team.get_attackers()[keynumber - 1].getPrice();
-                        teamoverall += team.get_attackers()[keynumber - 1].getOverall();
-                        players.push_back(team.get_attackers()[keynumber - 1]);
-                        std::cout << "Remaining balance: " << balance << std::endl;
-                        break;
-                    }
-                    else
-                        std::cout << "You don't have enough FUT Coins to buy this player. Choose another one.";
-                else if (tolower(yes_or_no) == 'n')
+                if (!PlayerInTeam(players, team.get_attackers()[keynumber - 1]))
                 {
-                    std::cout << "If you want to choose another team, let us know. (y/n)" << std::endl;
-                    char yes_or_no2;
-                    std::cin >> yes_or_no2;
-                    if (yes_or_no2 == 'y')
+                    char yes_or_no;
+                    if (team.get_attackers()[keynumber - 1].getName() != "")
+                        std::cout << "You've chosen " << team.get_attackers()[keynumber - 1].getName() << " " << team.get_attackers()[keynumber - 1].getSecond_Name() << ", " << team.get_attackers()[keynumber - 1].getOverall() << std::endl;
+                    else
+                        std::cout << "You've chosen " << team.get_attackers()[keynumber - 1].getSecond_Name() << ", " << team.get_attackers()[keynumber - 1].getOverall() << std::endl;
+                    std::cout << "Price: " << team.get_attackers()[keynumber - 1].getPrice() << std::endl;
+                    std::cout << "Are you sure? (y/n) ";
+                    std::cin >> yes_or_no;
+                    usleep(1000000);
+                    if (tolower(yes_or_no) == 'y')
+                        if (balance >= team.get_attackers()[keynumber - 1].getPrice())
+                        {
+                            ok = true;
+                            ok2 = true;
+                            balance -= team.get_attackers()[keynumber - 1].getPrice();
+                            teamvalue += team.get_attackers()[keynumber - 1].getPrice();
+                            teamoverall += team.get_attackers()[keynumber - 1].getOverall();
+                            players.push_back(team.get_attackers()[keynumber - 1]);
+                            std::cout << "Remaining balance: " << balance << std::endl;
+                            usleep(2000000);
+                            break;
+                        }
+                        else
+                        {
+                            std::cout << "You don't have enough FUT Coins to buy this player.\nDon't worry though. We've got you covered. +500000 coins for playing our game. :)";
+                            balance += 500000;
+                        }
+
+                    else if (tolower(yes_or_no) == 'n')
                     {
-                        ok = true;
-                        ok2 = false;
-                    }
-                    else if (yes_or_no2 == 'n')
-                    {
-                        std::cout << "Let's choose again, then." << std::endl;
+                        std::cout << "If you want to choose another team, let us know. (y/n)" << std::endl;
+                        char yes_or_no2;
+                        std::cin >> yes_or_no2;
+                        usleep(1000000);
+                        if (yes_or_no2 == 'y')
+                        {
+                            ok = true;
+                            ok2 = false;
+                        }
+                        else if (yes_or_no2 == 'n')
+                        {
+                            std::cout << "Let's choose again, then." << std::endl;
+                        }
                     }
                 }
-            }
+                else
+                    std::cout << "This player is already in your team. Choose another one." << std::endl;
             else
                 std::cout << "You have to choose a number between " << 1 << " and " << team.get_attackers().size() << ". Try again." << std::endl;
         }
@@ -615,13 +670,15 @@ void Exhibition(std::vector<Football_Player> your_team, int your_team_overall, s
     std::cout << "First of all, we need to give your team a name: ";
     std::cin.ignore();
     std::getline(std::cin, team_name);
+    usleep(1500000);
+    std::cout << "-----------------------------------------------------------------\n";
     for (auto &premier_league_team : premier_league_teams)
     {
-        premier_league_team.set_team_overall(premier_league_team.get_team_overall());
+        srand(time(NULL));
         int probability;
         std::cout << "Match number " << cnt << ": " << team_name << " - " << premier_league_team.get_team_name() << std::endl;
         cnt++;
-        usleep(1000000);
+        usleep(2000000);
         probability = rand() % 99 + 1;
         if (probability <= 33)
         {
@@ -629,6 +686,8 @@ void Exhibition(std::vector<Football_Player> your_team, int your_team_overall, s
             int jmp = rand() % 15;
             std::advance(it, jmp);
             std::cout << "Full time: " << team_name << " " << *it << " " << premier_league_team.get_team_name() << std::endl;
+            std::cout << "-----------------------------------------------------------------\n";
+            usleep(2000000);
             your_team_wins++;
         }
         else if (probability <= 66)
@@ -637,6 +696,8 @@ void Exhibition(std::vector<Football_Player> your_team, int your_team_overall, s
             int jmp = rand() % 5;
             std::advance(it, jmp);
             std::cout << "Full time: " << team_name << " " << *it << " " << premier_league_team.get_team_name() << std::endl;
+            std::cout << "-----------------------------------------------------------------\n";
+            usleep(2000000);
             your_team_draws++;
         }
         else
@@ -645,6 +706,8 @@ void Exhibition(std::vector<Football_Player> your_team, int your_team_overall, s
             int jmp = rand() % 15;
             std::advance(it, jmp);
             std::cout << "Full time: " << team_name << " " << *it << " " << premier_league_team.get_team_name() << std::endl;
+            std::cout << "-----------------------------------------------------------------\n";
+            usleep(2000000);
             your_team_losses++;
         }
     }
