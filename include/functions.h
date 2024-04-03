@@ -1,149 +1,14 @@
+#ifndef functions_h
+#define functions_h
+#include "footballplayer.h"
+#include "teamsheader.h"
+#include "fut_player.h"
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include <cstring>
 #include <conio.h>
 #include <unistd.h>
-#include <algorithm>
-#ifndef prem_teams.h
-#define prem_teams .h
-
-class FUT_Player
-{
-private:
-    std::string Player_Username;
-    std::string Player_Password;
-    int Balance;
-
-public:
-    FUT_Player(std::string Player_Username, std::string Player_Password, int Balance)
-    {
-        this->Player_Username = Player_Username;
-        this->Player_Password = Player_Password;
-        this->Balance = Balance;
-    }
-
-    std::string getUsername(void) const;
-    std::string getPassword(void) const;
-    int getBalance(void);
-};
-
-std::string FUT_Player::getUsername(void) const { return Player_Username; }
-std::string FUT_Player::getPassword(void) const { return Player_Password; }
-int FUT_Player::getBalance(void) { return Balance; }
-
-class Football_Player
-{
-private:
-    std::string Player_Second_Name;
-    std::string Player_Name;
-    std::string team_name;
-    std::string Nationality;
-    std::string Position;
-    int Overall;
-    int Price;
-
-public:
-    Football_Player(std::string Player_Second_Name, std::string Player_Name, std::string team_name, std::string Nationality, std::string Position, int Overall, int Price)
-    {
-        this->Player_Name = Player_Name;
-        this->Player_Second_Name = Player_Second_Name;
-        this->team_name = team_name;
-        this->Nationality = Nationality;
-        this->Position = Position;
-        this->Overall = Overall;
-        this->Price = Price;
-    }
-    std::string getName(void) const;
-    std::string getSecond_Name(void) const;
-    std::string getTeam_name(void) const;
-    std::string getNationality(void) const;
-    std::string getPosition(void) const;
-    int getOverall(void) const;
-    int getPrice(void) const;
-    friend std::ostream &operator<<(std::ostream &os, const Football_Player &football_player);
-
-    bool operator==(const Football_Player &player)
-    {
-        if (player.Player_Name == Player_Name && player.Player_Second_Name == Player_Second_Name && player.team_name == team_name && player.Overall == Overall && player.Nationality == Nationality && player.Position == Position && player.Overall == Overall && player.Price == Price)
-            return true;
-        else
-            return false;
-    }
-};
-
-std::string Football_Player::getName(void) const { return Player_Name; }
-std::string Football_Player::getSecond_Name(void) const { return Player_Second_Name; }
-std::string Football_Player::getTeam_name(void) const { return team_name; }
-std::string Football_Player::getNationality(void) const { return Nationality; }
-std::string Football_Player::getPosition(void) const { return Position; }
-int Football_Player::getOverall(void) const { return Overall; }
-int Football_Player::getPrice(void) const { return Price; }
-
-std::ostream &operator<<(std::ostream &os, const Football_Player &football_player)
-{
-    if (football_player.getName() != "")
-        os << football_player.getPosition() << ": " << football_player.getName() << " " << football_player.getSecond_Name() << ", " << football_player.getTeam_name() << ", " << football_player.getOverall();
-    else
-        os << football_player.getPosition() << ": " << football_player.getSecond_Name() << ", " << football_player.getTeam_name() << ", " << football_player.getOverall();
-    os << "\n";
-    return os;
-};
-
-class Team
-{
-private:
-    std::string team_name;
-    std::vector<Football_Player> goalkeepers;
-    std::vector<Football_Player> defenders;
-    std::vector<Football_Player> midfielders;
-    std::vector<Football_Player> attackers;
-
-public:
-    std::string get_team_name(void)
-    {
-        return team_name;
-    }
-    std::vector<Football_Player> get_goalkeepers()
-    {
-        return goalkeepers;
-    };
-    std::vector<Football_Player> get_defenders()
-    {
-        return defenders;
-    };
-    std::vector<Football_Player> get_midfielders()
-    {
-        return midfielders;
-    };
-    std::vector<Football_Player> get_attackers()
-    {
-        return attackers;
-    };
-    Team(std::string team_name)
-    {
-        this->team_name = team_name;
-    }
-    void addPlayer(Football_Player &player)
-    {
-        if (player.getPosition() == "GK")
-        {
-            goalkeepers.push_back(player);
-        }
-        else if (player.getPosition() == "DEF")
-        {
-            defenders.push_back(player);
-        }
-        else if (player.getPosition() == "MID")
-        {
-            midfielders.push_back(player);
-        }
-        else if (player.getPosition() == "ATT")
-        {
-            attackers.push_back(player);
-        }
-    }
-};
-
 bool isNumber(std::string s)
 {
     if (s.size() == 0)
@@ -156,7 +21,7 @@ bool isNumber(std::string s)
         }
     }
     return true;
-}
+};
 
 void log_in(std::vector<FUT_Player> players, int &balance, std::string &playerusername)
 {
@@ -185,9 +50,9 @@ void log_in(std::vector<FUT_Player> players, int &balance, std::string &playerus
                 while (!pass)
                 {
                     while ((ch = _getch()) != 13)
-                    { // 13 is ASCII code for "Enter"
+                    { // ASCII pentru "Enter"
                         if (ch == 8)
-                        { // 8 is ASCII code for "Backspace"
+                        { // ASCII pentru "Backspace"
                             if (!password.empty())
                             {
                                 std::cout << "\b \b";
@@ -713,5 +578,5 @@ void Exhibition(std::vector<Football_Player> your_team, int your_team_overall, s
     }
     std::cout << "Your team has " << your_team_wins << " wins, " << your_team_draws << " draws and " << your_team_losses << " losses. Thanks for playing!\n";
     std::cout << "https://github.com/tudoriordache2004";
-}
+};
 #endif

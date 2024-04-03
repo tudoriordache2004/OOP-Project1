@@ -2,8 +2,12 @@
 #include <vector>
 #include <cstring>
 #include <conio.h>
+#include <algorithm>
 #include <unistd.h>
-#include "prem_teams.h"
+#include "include/footballplayer.h"
+#include "include/functions.h"
+#include "include/fut_player.h"
+#include "include/teamsheader.h"
 int main()
 {
     std::vector<Team> teams;
